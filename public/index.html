@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AnilistStream Addon</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: radial-gradient(circle at 30% 30%, #222, #000);
+        color: #eee;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        text-align: center;
+        margin: 0;
+      }
+      h1 {
+        color: #ffcc66;
+        margin-bottom: 8px;
+      }
+      p {
+        color: #aaa;
+        max-width: 400px;
+        margin-bottom: 24px;
+      }
+      a.install-btn {
+        display: inline-block;
+        background: #ffcc66;
+        color: #000;
+        text-decoration: none;
+        font-weight: bold;
+        padding: 14px 28px;
+        border-radius: 8px;
+        transition: background 0.2s;
+      }
+      a.install-btn:hover {
+        background: #ffdd88;
+      }
+      .footer {
+        position: absolute;
+        bottom: 10px;
+        color: #555;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>AnilistStream</h1>
+    <p>
+      Stream anime directly from Anilist sources in Stremio. Click below to
+      install the addon instantly.
+    </p>
+    <a
+      class="install-btn"
+      href="stremio://miraitv.stremio.edmit.in/manifest.json"
+      >Install in Stremio</a
+    >
+
+    <div class="footer">
+      <a href="/configure" style="color: #888; text-decoration: none"
+        >Advanced configuration</a
+      >
+    </div>
+  </body>
+</html>

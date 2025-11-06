@@ -59,6 +59,10 @@ const manifest = {
 
 // ------------------- CONFIGURE ROUTES -------------------
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 // Serve configuration page (no token)
 app.get("/configure", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "configure.html"));
