@@ -61,7 +61,7 @@ const manifest = {
   idPrefixes: ["ani_"],
   behaviorHints: {
     configurable: true,
-    configurationRequired: true,
+    configurationRequired: false,
   },
   config: [
     {
