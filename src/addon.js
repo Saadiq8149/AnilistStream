@@ -61,6 +61,10 @@ builder.defineMetaHandler(async ({ type, id }) => {
 });
 
 builder.defineStreamHandler(async ({ type, id }) => {
+  if (!id.startsWith("ani_")) {
+    return { streams: [] };
+  }
+
   console.log("request for streams: " + type + " " + id);
   const animeId = id.split("_")[1];
   const title = id.split("_")[2].replace("?", "").replace("!", "");
