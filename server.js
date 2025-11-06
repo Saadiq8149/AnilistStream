@@ -61,7 +61,7 @@ const manifest = {
   idPrefixes: ["ani_"],
   behaviorHints: {
     configurable: true,
-    configurationRequired: false,
+    configurationRequired: true,
   },
   config: [
     {
@@ -69,7 +69,7 @@ const manifest = {
       type: "text",
       title:
         'Your Anilist access token. Get it by visiting <a href="https://anilist.co/api/v2/oauth/authorize?client_id=31463&response_type=token" target="_blank" rel="noopener noreferrer">Anilist OAuth Authorize</a> and copying the token from the Box.',
-      required: false,
+      required: true,
     },
   ],
 };
