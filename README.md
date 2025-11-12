@@ -64,6 +64,13 @@ To get your access token:
 - Integrates with Stremio's addon protocol
 - Sources anime from multiple providers
 
+## To-Do / Future Features
+
+Planned tasks and enhancements for upcoming development cycles:
+
+1. feat: next-season detection — auto-link sequels (e.g., “Attack on Titan S3 → Final Season”)
+2. test: add tests and ci/cd auto deploy
+
 ## License
 
 This project is provided as-is for personal use.
