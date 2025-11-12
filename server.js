@@ -59,7 +59,7 @@ const manifest = {
   name: "AnilistStream",
   description: "Streaming anime and Anilist sync",
   idPrefixes: ["ani_"],
-  logo: "",
+  logo: "https://miraitv.stremio.edmit.in/logo.png",
   behaviorHints: {
     configurable: true,
     configurationRequired: false,
