@@ -137,6 +137,12 @@ async function getUserWatchStatus(anilistToken, anilistId) {
 }
 
 async function updateUserWatchList(anilistToken, anilistId, progress, status) {
+  const animeDetails = await getAnimeDetails(anilistId);
+
+  if (status === "CURRENT" && progress >= animeDetails.videos.length) {
+    status = "COMPLETED";
+  }
+
   const mutation = `  
     mutation ($mediaId: Int!, $status: MediaListStatus!, $progress: Int!) {
       SaveMediaListEntry(mediaId: $mediaId, status: $status, progress: $progress) {
