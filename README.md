@@ -70,8 +70,8 @@ Planned tasks and enhancements for upcoming development cycles:
 
 - [ ] **feat:** next-season detection — auto-link sequels (e.g., "Attack on Titan S3 → Final Season")
 - [ ] **test:** add tests and CI/CD auto-deploy
-- [ ] **feat:** adding dubbed anime
-- [ ] **fix:**  fixing subtitle issues for auto HLS stream
+- [x] **feat:** adding dubbed anime
+- [x] **fix:**  fixing subtitle issues for auto HLS stream
 - [ ] **fix:**  better error displays when user not logged in
 - [ ] **feat:** sorting and filtering search results
 - [ ] **feat:** adding logging
