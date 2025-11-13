@@ -333,7 +333,7 @@ async function getWatchingAnime(anilistToken) {
         name: anime.title.english || anime.title.romaji || anime.title.native,
         poster:
           anime.status === "RELEASING"
-            ? `http://127.0.0.1:7000/poster/${anime.id}.png` +
+            ? `https://miraitv.stremio.edmit.in/poster/${anime.id}.png` +
               `?url=${encodeURIComponent(anime.coverImage.large)}` +
               `&status=${anime.status}` +
               `&progress=${entry.progress || 0}` +
