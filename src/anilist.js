@@ -282,6 +282,7 @@ async function getWatchingAnime(anilistToken) {
           name
           entries {
             id
+            progress
             media {
               id
               title {
@@ -293,6 +294,12 @@ async function getWatchingAnime(anilistToken) {
                 large
               }
               format
+              status
+              episodes
+              nextAiringEpisode {
+                airingAt
+                episode
+              }
             }
           }
         }
@@ -318,12 +325,23 @@ async function getWatchingAnime(anilistToken) {
   let watchingAnime = [];
   data.data.MediaListCollection.lists.forEach((list) => {
     list.entries.forEach((entry) => {
+      console.log("Entry media status:", entry.media.status);
       const anime = entry.media;
+
       watchingAnime.push({
         id: "ani_" + anime.id.toString(),
         type: "series",
         name: anime.title.english || anime.title.romaji || anime.title.native,
-        poster: anime.coverImage.large,
+        poster:
+          anime.status === "RELEASING"
+            ? `http://127.0.0.1:7000/poster/${anime.id}.png` +
+              `?url=${encodeURIComponent(anime.coverImage.large)}` +
+              `&status=${anime.status}` +
+              `&progress=${entry.progress || 0}` +
+              `&episodes=${anime.nextAiringEpisode?.episode - 1 || 0}` +
+              `&nextAir=${anime.nextAiringEpisode?.airingAt || 0}`
+            : anime.coverImage.large,
+
         format: anime.format,
       });
     });

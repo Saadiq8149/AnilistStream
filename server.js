@@ -15,6 +15,7 @@ const {
 const { getAnimeByAnilistId, getSubtitles } = require("./src/anicli");
 
 const app = express();
+const sharp = require("sharp");
 app.use(cors());
 app.use(express.static("public"));
 
@@ -163,11 +164,6 @@ app.get("/:anilistToken/catalog/:type/:id/:extra.json", async (req, res) => {
   try {
     const { anilistToken, type, id, extra } = req.params;
 
-    if (id === "anilist_planning" && anilistToken) {
-      const planningAnime = await getPlanningAnime(anilistToken);
-      return res.json({ metas: planningAnime });
-    }
-
     const searchQuery =
       extra && extra.startsWith("search=")
         ? decodeURIComponent(extra.split("=")[1])
@@ -220,6 +216,8 @@ app.get("/:anilistToken/stream/:type/:id.json", async (req, res) => {
       episodeNumber,
       anilistToken
     );
+
+    console.log(streams);
 
     // Update user's watch status on Anilist
     updateUserWatchStatusOnAnilist(
@@ -319,6 +317,82 @@ app.get("/subtitles/:type/:id/filename=:filename.json", async (req, res) => {
   } catch (err) {
     console.error("Subtitles error", err);
     res.status(500).json;
+  }
+});
+
+app.get("/poster/:id.png", async (req, res) => {
+  try {
+    const original = req.query.url;
+    const status = req.query.status;
+    const progress = parseInt(req.query.progress || 0);
+    const episodes = parseInt(req.query.episodes || 0);
+    const nextAirUnix = parseInt(req.query.nextAir || 0);
+
+    const img = await fetch(original).then((r) => r.arrayBuffer());
+    const posterBuffer = Buffer.from(img);
+
+    let composite = sharp(posterBuffer);
+
+    if (status === "RELEASING") {
+      if (progress < episodes) {
+        const newEpBadgeSvg = Buffer.from(`
+          <svg xmlns="http://www.w3.org/2000/svg" width="200" height="60" viewBox="0 0 200 80" fill="none">
+            <rect x="0" y="10" width="200" height="60" rx="20" fill="#5953db"/>
+            <text
+              x="100"
+              y="49%"
+              dominant-baseline="middle"
+              text-anchor="middle"
+              fill="white"
+              font-family="Arial, sans-serif"
+              font-size="28"
+              font-weight="bold">
+              NEW EP OUT
+            </text>
+          </svg>
+        `);
+        composite = composite.composite([
+          {
+            input: await sharp(newEpBadgeSvg).png().toBuffer(),
+            gravity: "south",
+          },
+        ]);
+      } else {
+        const now = Math.floor(Date.now() / 1000);
+        const diffDays = Math.ceil((nextAirUnix - now) / 86400);
+        if (diffDays > 0) {
+          const nextEpBadgeSvg = Buffer.from(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" viewBox="0 0 200 80" fill="none">
+              <rect x="-10" y="10" width="220" height="60" rx="20" fill="#5953db"/>
+              <text
+                x="100"
+                y="49%"
+                dominant-baseline="middle"
+                text-anchor="middle"
+                fill="white"
+                font-family="Arial, sans-serif"
+                font-size="28"
+                font-weight="bold">
+                EP IN ${diffDays} DAYS
+              </text>
+            </svg>
+          `);
+          composite = composite.composite([
+            {
+              input: await sharp(nextEpBadgeSvg).png().toBuffer(),
+              gravity: "south",
+            },
+          ]);
+        }
+      }
+    }
+
+    const buffer = await composite.png({ compressionLevel: 8 }).toBuffer();
+    res.setHeader("Content-Type", "image/png");
+    res.send(buffer);
+  } catch (err) {
+    console.error("Poster-gen error:", err);
+    res.status(500).json({ error: "Failed to generate poster" });
   }
 });
 
