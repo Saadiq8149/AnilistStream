@@ -1,8 +1,8 @@
 const { getAnimeByAnilistId, getEpisodeUrls } = require("./anicli");
 const { getUserWatchStatus, updateUserWatchList } = require("./anilist");
 
-async function getAnimeStreams(animeId, title, episodeNumber, anilistToken) {
-  const privateId = await getAnimeByAnilistId(animeId, title, anilistToken);
+async function getAnimeStreams(animeId, title, episodeNumber) {
+  const privateId = await getAnimeByAnilistId(animeId, title);
   const sources = await getEpisodeUrls(privateId.id, episodeNumber);
 
   var streams = [];

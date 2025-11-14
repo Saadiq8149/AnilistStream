@@ -223,12 +223,7 @@ app.get("/:anilistToken/stream/:type/:id.json", async (req, res) => {
 
     const [_, animeId, title, episode] = id.split("_");
 
-    const streams = await getAnimeStreams(
-      animeId,
-      title,
-      episode,
-      anilistToken
-    );
+    const streams = await getAnimeStreams(animeId, title, episode);
 
     // Update user's watch status on Anilist
     if (anilistToken) {
@@ -250,12 +245,7 @@ app.get("/stream/:type/:id.json", async (req, res) => {
 
     const [_, animeId, title, episode] = id.split("_");
 
-    const streams = await getAnimeStreams(
-      animeId,
-      title,
-      episode,
-      anilistToken
-    );
+    const streams = await getAnimeStreams(animeId, title, episode);
 
     res.json({ streams });
   } catch (err) {
