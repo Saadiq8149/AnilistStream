@@ -107,6 +107,9 @@ async function getEpisodeUrls(allAnimeId, episodeNumber) {
 
     for (let line of lines) {
       const [prefix, url] = line.split(">");
+
+      if (prefix === undefined || url === undefined) continue;
+
       if (prefix.trim() === "subtitle" || prefix.trim() === "m3u8_refr")
         continue;
 

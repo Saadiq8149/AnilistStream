@@ -3,11 +3,9 @@ const { getUserWatchStatus, updateUserWatchList } = require("./anilist");
 
 async function getAnimeStreams(animeId, title, episodeNumber) {
   const privateId = await getAnimeByAnilistId(animeId, title);
-
   if (!privateId) return [];
 
   const sources = await getEpisodeUrls(privateId.id, episodeNumber);
-
   var streams = [];
 
   for (const source of sources.sub) {

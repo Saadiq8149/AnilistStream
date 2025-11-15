@@ -102,6 +102,7 @@ async function getAnimeDetails(animeId) {
     releaseInfo: anime.seasonYear,
     imdbRating: anime.averageScore,
     videos: videos,
+    status: anime.status,
   };
 }
 
@@ -142,7 +143,10 @@ async function getUserWatchStatus(anilistToken, anilistId) {
 async function updateUserWatchList(anilistToken, anilistId, progress, status) {
   const animeDetails = await getAnimeDetails("ani_" + anilistId);
 
-  if (progress >= animeDetails.videos.length) {
+  if (
+    progress >= animeDetails.videos.length &&
+    animeDetails.status != "RELEASING"
+  ) {
     status = "COMPLETED";
   }
 
