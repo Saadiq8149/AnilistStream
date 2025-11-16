@@ -19,10 +19,14 @@ async function getAnimeStreams(animeId, title, episodeNumber) {
       behaviorHints: {
         notWebReady: true,
         proxyHeaders: {
-          request: {
-            Referer: source.referer,
-            "User-Agent": source["user-agent"],
-          },
+          request: source.referer
+            ? {
+                Referer: source.referer,
+                "User-Agent": source["user-agent"],
+              }
+            : {
+                "User-Agent": source["user-agent"],
+              },
         },
       },
     });
