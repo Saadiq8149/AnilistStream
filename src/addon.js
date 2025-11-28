@@ -21,12 +21,12 @@ async function getAnimeStreams(animeId, title, episodeNumber) {
         proxyHeaders: {
           request: source.referer
             ? {
-                Referer: source.referer,
-                "User-Agent": source["user-agent"],
-              }
+              Referer: source.referer,
+              "User-Agent": source["user-agent"],
+            }
             : {
-                "User-Agent": source["user-agent"],
-              },
+              "User-Agent": source["user-agent"],
+            },
         },
       },
     });
@@ -63,40 +63,38 @@ async function updateUserWatchStatusOnAnilist(
 ) {
   if (anilistToken && streams.length > 0) {
     const userWatchStatus = await getUserWatchStatus(anilistToken, animeId);
-    if (userWatchStatus) {
-      switch (userWatchStatus) {
-        case "PLANNING":
-          await updateUserWatchList(
-            anilistToken,
-            animeId,
-            episodeNumber,
-            "CURRENT"
-          );
-          break;
-        case "COMPLETED":
-          await updateUserWatchList(
-            anilistToken,
-            animeId,
-            episodeNumber,
-            "REPEATING"
-          );
-          break;
-        case "REPEATING":
-          await updateUserWatchList(
-            anilistToken,
-            animeId,
-            episodeNumber,
-            "REPEATING"
-          );
-          break;
-        default:
-          await updateUserWatchList(
-            anilistToken,
-            animeId,
-            episodeNumber,
-            "CURRENT"
-          );
-      }
+    switch (userWatchStatus) {
+      case "PLANNING":
+        await updateUserWatchList(
+          anilistToken,
+          animeId,
+          episodeNumber,
+          "CURRENT"
+        );
+        break;
+      case "COMPLETED":
+        await updateUserWatchList(
+          anilistToken,
+          animeId,
+          episodeNumber,
+          "REPEATING"
+        );
+        break;
+      case "REPEATING":
+        await updateUserWatchList(
+          anilistToken,
+          animeId,
+          episodeNumber,
+          "REPEATING"
+        );
+        break;
+      default:
+        await updateUserWatchList(
+          anilistToken,
+          animeId,
+          episodeNumber,
+          "CURRENT"
+        );
     }
   }
 }
