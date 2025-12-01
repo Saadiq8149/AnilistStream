@@ -17,6 +17,7 @@ const app = express();
 const sharp = require("sharp");
 app.use(cors());
 app.use(express.static("public"));
+app.set("trust proxy", true);
 
 const stats = {
   requestTimestamps: [],
@@ -26,7 +27,13 @@ const stats = {
 // Middleware to log requests and track stats
 app.use((req, res, next) => {
   const start = Date.now();
-  const clientIP = req.ip || req.connection.remoteAddress || "unknown";
+  const clientIP =
+    req.headers["x-forwarded-for"] ||
+    req.headers["x-real-ip"] ||
+    req.headers["cf-connecting-ip"] ||
+    req.socket.remoteAddress ||
+    req.ip ||
+    "unknown";
 
   stats.requestTimestamps.push(Date.now());
 
