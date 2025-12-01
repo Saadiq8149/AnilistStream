@@ -35,8 +35,6 @@ app.use((req, res, next) => {
     req.ip ||
     "unknown";
 
-  console.log(clientIP);
-
   stats.requestTimestamps.push(Date.now());
 
   stats.activeIPs.set(clientIP, Date.now());
