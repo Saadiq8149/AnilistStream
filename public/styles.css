@@ -1,0 +1,17 @@
+:root {
+    --bg: #000000;
+    --primary: #0066cc;
+    --primary-dark: #0052a3;
+    --text-main: #eeeeee;
+    --text-muted: #aaaaaa;
+    --text-dim: #999999;
+    --text-subtle: #888888;
+    --text-faint: #777777;
+    --text-placeholder: #666666;
+    --text-footer: #555555;
+    --border-primary: rgba(0, 102, 204, 0.3);
+    --border-primary-strong: rgba(0, 102, 204, 0.6);
+    --surface-hover: rgba(0, 102, 204, 0.12);
+    --surface-input: rgba(255, 255, 255, 0.05);
+    --surface-input-focus: rgba(0, 102, 204, 0.1);
+}

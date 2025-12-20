@@ -1,198 +1,106 @@
-<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AnilistStream Addon</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AnilistStream Addon</title>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <link rel="stylesheet" href="/styles.css" />
+    </head>
 
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: black;
-        color: #eee;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        padding: 20px;
-      }
+    <body
+        class="min-h-screen bg-[var(--bg)] text-[var(--text-main)] flex items-center justify-center px-5 font-[Segoe_UI,Tahoma,Geneva,Verdana,sans-serif]"
+    >
+        <div class="w-full max-w-[600px] text-center">
+            <!-- Title -->
+            <h1 class="mb-3 text-5xl max-sm:text-3xl font-bold">
+                <span class="text-white">Anilist</span
+                ><span class="text-[var(--primary)]">Stream</span>
+            </h1>
 
-      .container {
-        text-align: center;
-        max-width: 600px;
-        width: 100%;
-      }
+            <!-- Subtitle -->
+            <p class="mb-8 text-[1.1em] text-[var(--text-muted)]">
+                Stream anime directly from Anilist sources in Stremio
+            </p>
 
-      h1 {
-        margin-bottom: 12px;
-        font-size: 3em;
-      }
+            <!-- Stats -->
+            <div class="mb-8 grid grid-cols-2 gap-4">
+                <div
+                    class="rounded-xl border-4 border-[var(--border-primary)] backdrop-blur-md p-6 transition-all duration-300 hover:bg-[var(--surface-hover)] hover:border-[var(--border-primary-strong)] hover:-translate-y-1"
+                >
+                    <div
+                        id="rpm-value"
+                        class="mb-2 text-[2.5em] max-sm:text-2xl font-bold text-[var(--primary)]"
+                    >
+                        0
+                    </div>
+                    <div
+                        class="text-[0.95em] uppercase tracking-wider text-[var(--text-dim)]"
+                    >
+                        Requests
+                        <span
+                            class="ml-1 text-[0.7em] text-[var(--text-faint)]"
+                        >
+                            per minute
+                        </span>
+                    </div>
+                </div>
 
-      .anilist-text {
-        color: #ffffff;
-        font-weight: 700;
-      }
+                <div
+                    class="rounded-xl border-4 border-[var(--border-primary)] backdrop-blur-md p-6 transition-all duration-300 hover:bg-[var(--surface-hover)] hover:border-[var(--border-primary-strong)] hover:-translate-y-1"
+                >
+                    <div
+                        id="users-value"
+                        class="mb-2 text-[2.5em] max-sm:text-2xl font-bold text-[var(--primary)]"
+                    >
+                        0
+                    </div>
+                    <div
+                        class="text-[0.95em] uppercase tracking-wider text-[var(--text-dim)]"
+                    >
+                        Active
+                        <span
+                            class="ml-1 text-[0.7em] text-[var(--text-faint)]"
+                        >
+                            users
+                        </span>
+                    </div>
+                </div>
+            </div>
 
-      .stream-text {
-        color: #0066cc;
-        font-weight: 700;
-      }
+            <!-- Install button -->
+            <a
+                href="stremio://miraitv.stremio.edmit.in/manifest.json"
+                class="inline-block rounded-lg px-8 py-4 max-sm:px-6 max-sm:py-3 text-white font-bold bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] shadow-[0_4px_15px_rgba(0,102,204,0.4)] hover:shadow-[0_6px_20px_rgba(0,102,204,0.6)] hover:-translate-y-0.5 transition-all duration-300"
+            >
+                Install in Stremio
+            </a>
 
-      p {
-        color: #aaa;
-        margin-bottom: 32px;
-        font-size: 1.1em;
-      }
-
-      .stats-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-        margin-bottom: 32px;
-      }
-
-      .stat-card {
-        background: rgba(0, 102, 204, 0);
-        backdrop-filter: blur(10px);
-        border: 4px solid rgba(0, 102, 204, 0.3);
-        border-radius: 12px;
-        padding: 24px;
-        transition: all 0.3s ease;
-      }
-
-      .stat-card:hover {
-        background: rgba(0, 102, 204, 0.12);
-        border-color: rgba(0, 102, 204, 0.6);
-        transform: translateY(-4px);
-      }
-
-      .stat-value {
-        font-size: 2.5em;
-        font-weight: bold;
-        color: #0066cc;
-        margin-bottom: 8px;
-      }
-
-      .stat-label {
-        font-size: 0.95em;
-        color: #999;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-
-      .stat-unit {
-        font-size: 0.7em;
-        color: #777;
-        margin-left: 4px;
-      }
-
-      a.install-btn {
-        display: inline-block;
-        background: linear-gradient(135deg, #0066cc, #0052a3);
-        color: #fff;
-        text-decoration: none;
-        font-weight: bold;
-        padding: 14px 32px;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        font-size: 1em;
-        box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
-      }
-
-      a.install-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 102, 204, 0.6);
-      }
-
-      .footer {
-        margin-top: 24px;
-        color: #555;
-        font-size: 14px;
-      }
-
-      .footer a {
-        color: #888;
-        text-decoration: none;
-        transition: color 0.2s;
-      }
-
-      .footer a:hover {
-        color: #0066cc;
-      }
-
-      @media (max-width: 480px) {
-        h1 {
-          font-size: 2em;
-        }
-
-        .stat-value {
-          font-size: 2em;
-        }
-
-        a.install-btn {
-          padding: 12px 24px;
-          font-size: 0.9em;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>
-        <span class="anilist-text">Anilist</span
-        ><span class="stream-text">Stream</span>
-      </h1>
-      <p>Stream anime directly from Anilist sources in Stremio</p>
-
-      <div class="stats-container">
-        <div class="stat-card">
-          <div class="stat-value" id="rpm-value">0</div>
-          <div class="stat-label">
-            Requests <span class="stat-unit">per minute</span>
-          </div>
+            <!-- Footer -->
+            <div class="mt-6 text-sm text-[var(--text-footer)]">
+                <a
+                    href="/configure"
+                    class="text-[var(--text-subtle)] hover:text-[var(--primary)] transition-colors"
+                >
+                    Advanced configuration
+                </a>
+            </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-value" id="users-value">0</div>
-          <div class="stat-label">
-            Active <span class="stat-unit">users</span>
-          </div>
-        </div>
-      </div>
 
-      <a
-        class="install-btn"
-        href="stremio://miraitv.stremio.edmit.in/manifest.json"
-        >Install in Stremio</a
-      >
+        <script>
+            async function updateStats() {
+                try {
+                    const response = await fetch("/api/stats");
+                    const data = await response.json();
+                    document.getElementById("rpm-value").textContent = data.rpm;
+                    document.getElementById("users-value").textContent =
+                        data.activeUsers;
+                } catch (error) {
+                    console.error("Failed to fetch stats:", error);
+                }
+            }
 
-      <div class="footer">
-        <a href="/configure" style="text-decoration: none"
-          >Advanced configuration</a
-        >
-      </div>
-    </div>
-
-    <script>
-      async function updateStats() {
-        try {
-          const response = await fetch("/api/stats");
-          const data = await response.json();
-          document.getElementById("rpm-value").textContent = data.rpm;
-          document.getElementById("users-value").textContent = data.activeUsers;
-        } catch (error) {
-          console.error("Failed to fetch stats:", error);
-        }
-      }
-
-      // Update stats immediately and then every second
-      updateStats();
-      setInterval(updateStats, 1000);
-    </script>
-  </body>
+            updateStats();
+            setInterval(updateStats, 1000);
+        </script>
+    </body>
 </html>

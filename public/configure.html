@@ -1,219 +1,110 @@
-<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AnilistStream Configuration</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AnilistStream Configuration</title>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
 
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: black;
-        color: #eee;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        padding: 20px;
-      }
+    <body
+        class="min-h-screen bg-[var(--bg)] text-[var(--text-main)] flex items-center justify-center px-5"
+    >
+        <div class="w-full max-w-[500px] text-center">
+            <!-- Title -->
+            <h1 class="mb-3 text-4xl max-sm:text-3xl font-bold">
+                <span class="text-white">Anilist</span
+                ><span class="text-[var(--primary)]">Stream</span>
+            </h1>
 
-      .container {
-        text-align: center;
-        max-width: 500px;
-        width: 100%;
-      }
+            <p class="mb-6 text-sm text-[var(--text-muted)]">
+                Connect your AniList account to install the addon
+            </p>
 
-      h1 {
-        margin-bottom: 12px;
-        font-size: 2.5em;
-      }
+            <!-- LOGIN STATE -->
+            <div id="login-state">
+                <a
+                    href="https://anilist.co/api/v2/oauth/authorize?client_id=28129&response_type=token"
+                    class="inline-block rounded-lg px-8 py-3 font-bold text-white bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] shadow-[0_4px_15px_rgba(0,102,204,0.4)] hover:shadow-[0_6px_20px_rgba(0,102,204,0.6)] hover:-translate-y-0.5 transition-all duration-300"
+                    >Login with AniList</a
+                >
+            </div>
 
-      .anilist-text {
-        color: #ffffff;
-        font-weight: 700;
-      }
+            <!-- TOKEN STATE -->
+            <div id="token-state" class="hidden">
+                <div
+                    class="mb-4 rounded-xl border-4 border-[var(--border-primary)] backdrop-blur-md p-6 text-left"
+                >
+                    <p class="mb-1 text-xs text-[var(--text-muted)]">
+                        Connected AniList token
+                    </p>
+                    <code
+                        id="token-display"
+                        class="block break-all text-sm text-[var(--primary)]"
+                    ></code>
+                </div>
 
-      .stream-text {
-        color: #0066cc;
-        font-weight: 700;
-      }
+                <button
+                    id="installBtn"
+                    class="w-full rounded-lg px-7 py-3 font-bold text-white bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] shadow-[0_4px_15px_rgba(0,102,204,0.4)] hover:shadow-[0_6px_20px_rgba(0,102,204,0.6)] hover:-translate-y-0.5 transition-all duration-300"
+                >
+                    Install in Stremio
+                </button>
+            </div>
 
-      p {
-        color: #aaa;
-        margin-bottom: 24px;
-        font-size: 0.95em;
-      }
+            <!-- Footer -->
+            <div class="mt-6 text-sm">
+                <a
+                    href="/"
+                    class="text-[var(--text-subtle)] hover:text-[var(--primary)] transition-colors"
+                >
+                    ← Back to Home
+                </a>
+            </div>
+        </div>
 
-      form {
-        backdrop-filter: blur(10px);
-        border: 4px solid rgba(0, 102, 204, 0.3);
-        padding: 32px;
-        border-radius: 12px;
-        margin-bottom: 24px;
-      }
+        <script>
+            (function () {
+                let token = null;
 
-      label {
-        display: block;
-        color: #bbb;
-        font-size: 0.95em;
-        margin-bottom: 8px;
-        font-weight: 500;
-        text-align: left;
-      }
+                if (window.location.hash.includes("access_token=")) {
+                    const params = new URLSearchParams(
+                        window.location.hash.substring(1),
+                    );
+                    token = params.get("access_token");
 
-      input[type="text"] {
-        width: 100%;
-        padding: 12px 14px;
-        margin-bottom: 20px;
-        border: 1px solid rgba(0, 102, 204, 0.3);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.05);
-        color: #fff;
-        font-size: 1em;
-        transition: all 0.3s ease;
-      }
+                    if (token) {
+                        sessionStorage.setItem("anilist_token", token);
+                        history.replaceState(null, "", "/configure");
+                    }
+                }
 
-      input[type="text"]:focus {
-        outline: none;
-        background: rgba(0, 102, 204, 0.1);
-        border-color: rgba(0, 102, 204, 0.6);
-      }
+                if (!token) {
+                    token = sessionStorage.getItem("anilist_token");
+                }
 
-      input[type="text"]::placeholder {
-        color: #666;
-      }
+                const loginState = document.getElementById("login-state");
+                const tokenState = document.getElementById("token-state");
+                const tokenDisplay = document.getElementById("token-display");
+                const installBtn = document.getElementById("installBtn");
 
-      button {
-        background: linear-gradient(135deg, #0066cc, #0052a3);
-        color: #fff;
-        border: none;
-        padding: 12px 28px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 1em;
-        width: 100%;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
-      }
+                if (token) {
+                    loginState.classList.add("hidden");
+                    tokenState.classList.remove("hidden");
 
-      button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 102, 204, 0.6);
-      }
+                    tokenDisplay.textContent =
+                        token.slice(0, 6) + "••••••••••••" + token.slice(-4);
 
-      a {
-        color: #0066cc;
-        text-decoration: none;
-        transition: color 0.2s;
-      }
+                    installBtn.addEventListener("click", () => {
+                        const stremioUrl =
+                            "stremio://miraitv.stremio.edmit.in/" +
+                            encodeURIComponent(token) +
+                            "/manifest.json";
 
-      a:hover {
-        color: #0052a3;
-      }
-
-      .footer-link {
-        margin-top: 20px;
-      }
-
-      .footer-link a {
-        display: inline-block;
-      }
-
-      @media (max-width: 480px) {
-        h1 {
-          font-size: 2em;
-        }
-
-        form {
-          padding: 24px;
-        }
-
-        button {
-          padding: 10px 20px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>
-        <span class="anilist-text">Anilist</span
-        ><span class="stream-text">Stream</span>
-      </h1>
-      <p>Configure your AniList token to get started</p>
-
-      <form id="configForm">
-        <label for="token">AniList Access Token:</label>
-        <input
-          type="text"
-          id="token"
-          name="anilist_access_token"
-          placeholder="Enter token here"
-          required
-        />
-        <button id="installBtn" type="button">Install in Stremio</button>
-      </form>
-
-      <p>
-        Don't have a token?
-        <a
-          id="oauthLink"
-          href="https://anilist.co/api/v2/oauth/authorize?client_id=31463&response_type=token"
-          target="_blank"
-          >Get one from AniList OAuth</a
-        >
-      </p>
-
-      <div class="footer-link">
-        <a href="/" style="color: #888">← Back to Home</a>
-      </div>
-    </div>
-
-    <script>
-      (function () {
-        // Detect #access_token from OAuth redirect
-        const hash = window.location.hash;
-        if (hash && hash.includes("access_token=")) {
-          const params = new URLSearchParams(hash.substring(1));
-          const token = params.get("access_token");
-          if (token)
-            window.location.href =
-              "/configure?anilist_access_token=" + encodeURIComponent(token);
-        }
-
-        // If token from query or path exists, prefill
-        const params = new URLSearchParams(window.location.search);
-        const queryToken = params.get("anilist_access_token");
-        const pathMatch = window.location.pathname.match(
-          /^\/([^/]+)\/configure\.json$/
-        );
-        const pathToken = pathMatch ? decodeURIComponent(pathMatch[1]) : null;
-
-        const tokenInput = document.getElementById("token");
-        if (queryToken) tokenInput.value = queryToken;
-        else if (pathToken) tokenInput.value = pathToken;
-
-        // Install button logic
-        document.getElementById("installBtn").addEventListener("click", () => {
-          if (!tokenInput.reportValidity()) return;
-          const token = tokenInput.value.trim();
-          if (!token) return alert("Enter your token first!");
-
-          const stremioUrl =
-            "stremio://miraitv.stremio.edmit.in" +
-            "/" +
-            encodeURIComponent(token) +
-            "/manifest.json";
-          window.location.href = stremioUrl;
-        });
-      })();
-    </script>
-  </body>
+                        window.location.href = stremioUrl;
+                    });
+                }
+            })();
+        </script>
+    </body>
 </html>
