@@ -2,6 +2,7 @@ import {
     getAnimeStreams,
     updateUserWatchStatusOnAnilist,
 } from "../core/addon.js";
+import { getAnilistId } from "../core/anilist.js";
 import express from "express";
 
 const app = express();
@@ -11,10 +12,20 @@ app.get("/:anilistToken/stream/:type/:id.json", async (req, res) => {
     try {
         const { anilistToken, id } = req.params;
 
-        if (!id.startsWith("ani_")) return res.json({ streams: [] });
+        let animeId, title, episode, _;
 
-        const [_, animeId, title, episode] = id.split("_");
+        if (id.startsWith("ani_")) {
+            [_, animeId, title, episode] = id.split("_");
+        } else if (id.startsWith("kitsu")) {
+            [_, animeId, episode] = id.split(":");
+        } else {
+            return res.json({ streams: [] });
+        }
 
+        if (!title) {
+            // converting kitsu id to anilist id
+            [animeId, title] = await getAnilistId(animeId);
+        }
         const streams = await getAnimeStreams(animeId, title, episode);
 
         // Update user's watch status on Anilist
@@ -37,10 +48,20 @@ app.get("/:anilistToken/stream/:type/:id.json", async (req, res) => {
 app.get("/stream/:type/:id.json", async (req, res) => {
     try {
         const { id } = req.params;
+        let animeId, title, episode, _;
 
-        if (!id.startsWith("ani_")) return res.json({ streams: [] });
+        if (id.startsWith("ani_")) {
+            [_, animeId, title, episode] = id.split("_");
+        } else if (id.startsWith("kitsu")) {
+            [_, animeId, episode] = id.split(":");
+        } else {
+            return res.json({ streams: [] });
+        }
 
-        const [_, animeId, title, episode] = id.split("_");
+        if (!title) {
+            // converting kitsu id to anilist id
+            [animeId, title] = await getAnilistId(animeId);
+        }
 
         const streams = await getAnimeStreams(animeId, title, episode);
 

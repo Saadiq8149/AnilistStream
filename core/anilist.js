@@ -446,3 +446,21 @@ export async function getWatchingAnime(anilistToken) {
     });
     return watchingAnime.reverse();
 }
+
+export async function getAnilistId(kitsuId) {
+    // const idsMoeApiKey = "ids_99vvbg0fSt5EE9hQi7AVVzZRb29nkaqgxOOtOOxNBKE";
+    const idsMoeApiKey = process.env.IDS_MOE_API_KEY;
+
+    const response = await fetch(
+        `https://api.ids.moe/ids/${kitsuId}?platform=kitsu`,
+        {
+            headers: {
+                Authorization: `Bearer ${idsMoeApiKey}`,
+            },
+        },
+    );
+
+    const data = await response.json();
+
+    return [data.anilist, data.title];
+}

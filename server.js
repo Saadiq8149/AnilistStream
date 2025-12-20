@@ -7,6 +7,7 @@ import poster from "./handlers/poster.js";
 import stream from "./handlers/stream.js";
 import subtitles from "./handlers/subtitles.js";
 import catalog from "./handlers/catalog.js";
+import "dotenv/config";
 
 const app = express();
 

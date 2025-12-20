@@ -1,14 +1,16 @@
 {
-  "name": "stremio-addon-AnilistStream",
-  "version": "0.0.1",
-  "description": "Streaming anime and Anilist sync",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
-  },
-  "dependencies": {
-    "express": "^5.1.0",
-    "sharp": "^0.34.5",
-    "stremio-addon-sdk": "^1.6.10"
-  }
+    "name": "aniliststream",
+    "version": "1.0.0",
+    "description": "Streaming anime and Anilist sync",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "nodemon server.js"
+    },
+    "dependencies": {
+        "dotenv": "^17.2.3",
+        "express": "^5.1.0",
+        "sharp": "^0.34.5",
+        "stremio-addon-sdk": "^1.6.10"
+    },
+    "type": "module"
 }
