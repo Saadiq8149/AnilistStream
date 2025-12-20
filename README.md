@@ -13,8 +13,7 @@ It is designed to work seamlessly inside Stremio while sourcing anime streams fr
 
 ---
 
-## Installation & Usa<img width="256" height="256" alt="logo" src="https://github.com/user-attachments/assets/7f5cef57-237e-4497-8863-83839c56e901" />
-ge
+## Installation & Usage
 
 Install the addon in Stremio by visiting:
 
