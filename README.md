@@ -25,9 +25,11 @@
 
 ## Overview
 
-**AnilistStream** is a Stremio addon for streaming anime from multiple HTTP sources (no torrents, no P2P) while keeping your AniList watch list in sync. Originally ported from a Node.js implementation to Go, it features a modular provider architecture for easily adding or swapping metadata and stream sources, and can be fully self-hosted via Docker or from source.
----
+**AnilistStream** is a [Stremio](https://www.stremio.com/) addon for streaming anime from multiple HTTP sources (no torrents, no P2P) while keeping your AniList watch list in sync. Originally ported from a Node.js implementation to Go, it features a modular provider architecture for easily adding or swapping metadata and stream sources, and can be fully self-hosted via Docker or from source.
 
+Originally ported from a Node.js implementation, the Go version is built around a **modular provider architecture**, making it straightforward to add or swap metadata and stream sources. It ships with a built-in static web UI for configuration and addon installation, and is fully self-hostable via Docker or from source.
+
+---
 ## Features
 
 - 🎬 **HTTP-based streams** — direct video streams, no torrents or P2P required
