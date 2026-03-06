@@ -58,6 +58,8 @@ func (a *AllAnimeProvider) Name() string {
 }
 
 func (a *AllAnimeProvider) GetStreams(anilistID string, malID string, episode int) ([]types.Source, error) {
+	// TODO: If anilistID missing we need to search by malID
+
 	titles, err := getAnimeTitles(anilistID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get anime titles: %w", err)

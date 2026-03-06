@@ -12,16 +12,6 @@
                     "isRequired": true
                 }
             ]
-        },
-        {
-            "type": "series",
-            "id": "anilist_watching",
-            "name": "Watching Now"
-        },
-        {
-            "type": "series",
-            "id": "anilist_planning",
-            "name": "Planning to Watch"
         }
     ],
     "resources": [

@@ -16,14 +16,14 @@ func (s *StremioHandler) MetaHandler(w http.ResponseWriter, r *http.Request) {
 	idParam = strings.TrimSuffix(idParam, ".json")
 
 	parts := strings.Split(idParam, "_")
-	if len(parts) != 3 {
+	if len(parts) != 4 {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
 
-	id := parts[2]
+	providerID := parts[2]
 
-	anime, err := s.MetadataService.Provider.GetAnime(id)
+	anime, err := s.MetadataService.Provider.GetAnime(providerID)
 	if err != nil {
 		http.Error(w, "Error fetching anime", http.StatusInternalServerError)
 		return
@@ -41,7 +41,6 @@ func (s *StremioHandler) MetaHandler(w http.ResponseWriter, r *http.Request) {
 	var videos []types.Video
 
 	for i := 1; i <= anime.Episodes; i++ {
-
 		video := types.Video{
 			ID:       fmt.Sprintf("%s:%d", idParam, i),
 			Title:    fmt.Sprintf("Episode %d", i),

@@ -23,11 +23,13 @@ func (s *StremioHandler) StreamHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	metaID := parts[0]
+	animeID := parts[0]
 	episodeStr := parts[1]
 
-	anilistID := strings.TrimPrefix(metaID, "ani_")
-	anilistID = strings.Split(anilistID, "_")[0]
+	parts = strings.Split(strings.TrimPrefix(animeID, "ani_"), "_")
+	anilistID := parts[0]
+	// providerID := parts[1]
+	malID := parts[2]
 
 	episode, err := strconv.Atoi(episodeStr)
 	if err != nil {
@@ -39,13 +41,7 @@ func (s *StremioHandler) StreamHandler(w http.ResponseWriter, r *http.Request) {
 		s.AnilistService.SyncProgress(anilistID, episode, anilistToken)
 	}
 
-	meta, err := s.MetadataService.Provider.GetAnime(anilistID)
-	if err != nil {
-		http.Error(w, "Metadata lookup failed", http.StatusInternalServerError)
-		return
-	}
-
-	sources, err := s.SourceService.GetStreams(anilistID, meta.MalID, episode)
+	sources, err := s.SourceService.GetStreams(anilistID, malID, episode)
 	if err != nil {
 		http.Error(w, "Source fetch failed", http.StatusInternalServerError)
 		return

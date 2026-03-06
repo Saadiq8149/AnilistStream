@@ -12,7 +12,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	// "github.com/joho/godotenv"
+	"github.com/joho/godotenv"
 )
 
 func cors(next http.Handler) http.Handler {
@@ -31,9 +31,9 @@ func cors(next http.Handler) http.Handler {
 }
 
 func main() {
-	// if err := godotenv.Load(); err != nil {
-	// 	panic(err)
-	// }
+	if err := godotenv.Load(); err != nil {
+		panic(err)
+	}
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -46,5 +46,5 @@ func main() {
 	handlers.RegisterRoutes(r, metadataService, sourceService, anilistService)
 
 	fmt.Println("server running on :" + os.Getenv("PORT"))
-	http.ListenAndServe(":"+os.Getenv("PORT"), r)
+	http.ListenAndServe("127.0.0.1:"+os.Getenv("PORT"), r)
 }

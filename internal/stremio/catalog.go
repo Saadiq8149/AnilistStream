@@ -21,7 +21,6 @@ func (s *StremioHandler) CatalogHandler(w http.ResponseWriter, r *http.Request) 
 		anime, err := s.MetadataService.Provider.SearchAnime(searchQuery)
 		if err != nil {
 			http.Error(w, "Error searching for anime", http.StatusInternalServerError)
-			fmt.Println("Error searching for anime:", err)
 			return
 		}
 
@@ -41,7 +40,7 @@ func (s *StremioHandler) CatalogHandler(w http.ResponseWriter, r *http.Request) 
 
 			description := util.StripHTML(a.Description)
 			meta := types.MetaPreview{
-				ID:          fmt.Sprintf("ani_%s_%s", a.AnilistID, a.ProviderID),
+				ID:          fmt.Sprintf("ani_%s_%s_%s", a.AnilistID, a.ProviderID, a.MalID),
 				Type:        "series",
 				Name:        a.Title,
 				Poster:      a.Poster,
