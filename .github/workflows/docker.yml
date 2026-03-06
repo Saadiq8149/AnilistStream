@@ -33,5 +33,6 @@ jobs:
               with:
                   push: true
                   tags: 12345saadiq/aniliststream:latest
+                  platforms: linux/amd64
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
