@@ -80,62 +80,6 @@ docker run -d \
 
 ---
 
-### Docker Compose
-
-Create a `docker-compose.yml` file:
-
-```yaml
-
-services:
-  aniliststream:
-    image: 12345saadiq/aniliststream:latest
-    container_name: aniliststream
-    ports:
-      - "7000:7000"
-    env_file:
-      - .env
-    restart: unless-stopped
-```
-
-Then run:
-
-```bash
-docker compose up -d
-```
-
----
-
-### Run from Source
-
-**Prerequisites:**
-- [Go 1.21+](https://go.dev/dl/)
-- Git
-
-**Steps:**
-
-```bash
-# Clone the repository
-git clone https://github.com/Saadiq8149/AnilistStream.git
-cd AnilistStream
-
-# Install dependencies
-go mod download
-
-# Run the server
-go run .
-```
-
-The server will start on `http://localhost:7000` by default.
-
-To build a binary:
-
-```bash
-go build -o aniliststream .
-./aniliststream
-```
-
----
-
 ## Configuration
 
 Configuration is handled via **environment variables**. You can set these in your `.env` file.
@@ -200,31 +144,6 @@ AnilistStream/
 ---
 
 ## Development
-
-### Running Tests
-
-```bash
-go test ./...
-```
-
-### Building for Multiple Platforms
-
-```bash
-# Linux (amd64)
-GOOS=linux GOARCH=amd64 go build -o aniliststream-linux-amd64 .
-
-# macOS (arm64)
-GOOS=darwin GOARCH=arm64 go build -o aniliststream-darwin-arm64 .
-
-# Windows (amd64)
-GOOS=windows GOARCH=amd64 go build -o aniliststream-windows-amd64.exe .
-```
-
-### Building the Docker Image
-
-```bash
-docker build -t aniliststream .
-```
 
 ### Adding a New Provider
 
