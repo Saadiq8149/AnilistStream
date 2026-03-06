@@ -9,6 +9,10 @@
 </p>
 
 <p align="center">
+  Works with the addon’s own catalogs and <a href="https://github.com/danamag/stremio-anime-kitsu">AnimeKitsu catalogs</a> :)
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/github/stars/Saadiq8149/AnilistStream?style=for-the-badge&logo=github" alt="GitHub Stars" />
   <img src="https://img.shields.io/docker/pulls/12345saadiq/aniliststream?style=for-the-badge&logo=docker" alt="Docker Pulls" />
   <img src="https://img.shields.io/github/go-mod/go-version/Saadiq8149/AnilistStream?style=for-the-badge&logo=go" alt="Go Version" />
