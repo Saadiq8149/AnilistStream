@@ -70,7 +70,7 @@ Planned improvements and upcoming features:
 
 - [ ]  Redis caching layer for faster metadata and stream resolution
 - [ ]  CI/CD pipeline with GitHub Actions (build, test, Docker publish)
-- [ ]  Better background images for catalog and metadata views
+- [x]  Better background images for catalog and metadata views
 - [ ]  Kitsu support
 - [ ]  Episode Data (Titles, Dates and Thumbnails)
 - [ ]  More Lists (Trending, Planning, Watching)
