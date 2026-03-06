@@ -20,7 +20,6 @@ RUN adduser -D appuser
 
 COPY --from=builder /app/aniliststream .
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.env ./.env
 
 USER appuser
 
