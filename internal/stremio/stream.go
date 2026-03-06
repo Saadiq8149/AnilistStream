@@ -16,25 +16,56 @@ func (s *StremioHandler) StreamHandler(w http.ResponseWriter, r *http.Request) {
 	idParam := chi.URLParam(r, "id")
 	idParam = strings.TrimSuffix(idParam, ".json")
 
-	parts := strings.Split(idParam, "%3A")
+	var anilistID string
+	var episode int
+	var malID string
+	var err error
+	// var providerID string
 
-	if len(parts) != 2 {
-		http.Error(w, "Invalid stream ID", http.StatusBadRequest)
-		return
-	}
+	if strings.HasPrefix(idParam, "kitsu") {
+		parts := strings.Split(strings.TrimPrefix(idParam, "kitsu%3A"), "%3A")
+		if len(parts) != 2 {
+			http.Error(w, "Invalid stream ID", http.StatusBadRequest)
+			return
+		}
 
-	animeID := parts[0]
-	episodeStr := parts[1]
+		kitsuID := parts[0]
+		episodeStr := parts[1]
 
-	parts = strings.Split(strings.TrimPrefix(animeID, "ani_"), "_")
-	anilistID := parts[0]
-	// providerID := parts[1]
-	malID := parts[2]
+		episode, err = strconv.Atoi(episodeStr)
+		if err != nil {
+			http.Error(w, "Invalid episode", http.StatusBadRequest)
+			return
+		}
 
-	episode, err := strconv.Atoi(episodeStr)
-	if err != nil {
-		http.Error(w, "Invalid episode", http.StatusBadRequest)
-		return
+		idMap, err := s.IDMapService.GetIDMap(kitsuID, "kitsu")
+		if err != nil {
+			http.Error(w, "ID mapping failed", http.StatusInternalServerError)
+			return
+		}
+
+		anilistID = idMap["anilist"]
+	} else {
+		parts := strings.Split(idParam, "%3A")
+
+		if len(parts) != 2 {
+			http.Error(w, "Invalid stream ID", http.StatusBadRequest)
+			return
+		}
+
+		animeID := parts[0]
+		episodeStr := parts[1]
+
+		parts = strings.Split(strings.TrimPrefix(animeID, "ani_"), "_")
+		anilistID = parts[0]
+		// providerID = parts[1]
+		malID = parts[2]
+
+		episode, err = strconv.Atoi(episodeStr)
+		if err != nil {
+			http.Error(w, "Invalid episode", http.StatusBadRequest)
+			return
+		}
 	}
 
 	if anilistToken != "" {

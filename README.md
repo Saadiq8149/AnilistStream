@@ -45,9 +45,10 @@ Configuration is handled via **environment variables**. You can set these in you
 |---|---|---|
 | `PORT` | `7000` | Port the server listens on |
 | `SERVER_URL` | `http://127.0.0.1:7000` | Url the server runs on |
-| `ANILIST_CLIENT_ID` | — | AniList OAuth application client ID |
 | `METADATA_PROVIDER` |`ANILIST or ALL_ANIME` | Pick one, Anilist Better | 
 | `SOURCE_PROVIDERS` |`ALL_ANIME` | Comma separated providers if multiple available | 
+| `ANILIST_CLIENT_ID` | — | AniList OAuth application client ID (Optional) |
+| `IDS_MOE_API_KEY` | — | IdsMoe API KEY (Optional) | 
 
 
 
@@ -62,6 +63,14 @@ To enable watch progress syncing, you need to register an AniList API applicatio
 
 Users can then log in from the web UI to authorize progress syncing.
 
+### IdsMoe API Key
+
+To get Kitsu Catalog support, you need to obtain an API key from IdsMoe:
+
+1. Go to [https://ids.moe/](https://ids.moe/)
+2. Sign up for an account and generate an API key
+3. Copy the **API key** into your environment variables
+
 ---
 
 ## Roadmap / TODO
@@ -70,9 +79,7 @@ Planned improvements and upcoming features:
 
 - [ ]  Redis caching layer for faster metadata and stream resolution
 - [x]  CI/CD pipeline with GitHub Actions (build, test, Docker publish)
-- [ ]  Better background images for catalog and metadata views
-- [ ]  Kitsu support
-- [ ]  Episode Data (Titles, Dates and Thumbnails)
+- [x]  Kitsu support
 - [ ]  More Lists (Trending, Planning, Watching)
 <img src="https://img.shields.io/github/issues/Saadiq8149/AnilistStream?style=for-the-badge" />
 

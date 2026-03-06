@@ -3,6 +3,7 @@ package main
 import (
 	"anilist-stream/internal/anilist"
 	"anilist-stream/internal/handlers"
+	"anilist-stream/internal/idmap"
 	"anilist-stream/internal/metadata"
 	"anilist-stream/internal/streams"
 	"fmt"
@@ -43,7 +44,8 @@ func main() {
 	metadataService := metadata.NewMetadataService()
 	sourceService := streams.NewSourceService()
 	anilistService := anilist.NewAnilistService()
-	handlers.RegisterRoutes(r, metadataService, sourceService, anilistService)
+	idMapService := idmap.NewIDMapService()
+	handlers.RegisterRoutes(r, metadataService, sourceService, anilistService, idMapService)
 
 	fmt.Println("server running on :" + os.Getenv("PORT"))
 	http.ListenAndServe(":"+os.Getenv("PORT"), r)
