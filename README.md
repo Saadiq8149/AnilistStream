@@ -111,6 +111,7 @@ Planned improvements and upcoming features:
 - [ ]  CI/CD pipeline with GitHub Actions (build, test, Docker publish)
 - [ ]  Higher quality poster images
 - [ ]  Better background images for catalog and metadata views
+- [ ]  Kitsu support
 <img src="https://img.shields.io/github/issues/Saadiq8149/AnilistStream?style=for-the-badge" />
 
 ## Architecture
