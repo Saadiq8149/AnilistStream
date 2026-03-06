@@ -4,14 +4,91 @@
     --primary-dark: #0052a3;
     --text-main: #eeeeee;
     --text-muted: #aaaaaa;
-    --text-dim: #999999;
-    --text-subtle: #888888;
-    --text-faint: #777777;
-    --text-placeholder: #666666;
     --text-footer: #555555;
-    --border-primary: rgba(0, 102, 204, 0.3);
-    --border-primary-strong: rgba(0, 102, 204, 0.6);
-    --surface-hover: rgba(0, 102, 204, 0.12);
-    --surface-input: rgba(255, 255, 255, 0.05);
-    --surface-input-focus: rgba(0, 102, 204, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-main);
+    font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
+}
+
+.container {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    text-align: center;
+}
+
+.logo {
+    width: 110px;
+}
+
+h1 {
+    font-size: 42px;
+    margin: 0;
+}
+
+.description {
+    color: var(--text-muted);
+    max-width: 420px;
+    line-height: 1.5;
+}
+
+.install-btn {
+    background: var(--primary);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.install-btn:hover {
+    background: var(--primary-dark);
+}
+
+footer {
+    text-align: center;
+    color: var(--text-footer);
+    padding-bottom: 30px;
+}
+
+.configure-btn {
+    margin-top: 10px;
+    color: var(--text-muted);
+    text-decoration: none;
+}
+
+.configure-btn:hover {
+    color: var(--primary);
+}
+
+.token-box {
+    border: 1px solid var(--border-primary);
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.install-btn {
+    text-decoration: none;
+}
+
+.hidden {
+    display: none;
 }

@@ -1,108 +1,109 @@
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AnilistStream Configuration</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Configure AnilistStream</title>
 
-  <body
-    class="min-h-screen bg-[var(--bg)] text-[var(--text-main)] flex items-center justify-center px-5"
-  >
-    <div class="w-full max-w-[500px] text-center">
-      <!-- Title -->
-      <h1 class="mb-3 text-4xl max-sm:text-3xl font-bold">
-        <span class="text-white">Anilist</span
-        ><span class="text-[var(--primary)]">Stream</span>
-      </h1>
+        <link rel="stylesheet" href="/styles.css" />
+    </head>
 
-      <p class="mb-6 text-sm text-[var(--text-muted)]">
-        Connect your AniList account to install the addon
-      </p>
+    <body>
+        <div class="container">
+            <img src="/logo.png" class="logo" />
 
-      <!-- LOGIN STATE -->
-      <div id="login-state">
-        <a
-          href="https://anilist.co/api/v2/oauth/authorize?client_id=28129&response_type=token"
-          class="inline-block rounded-lg px-8 py-3 font-bold text-white bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] shadow-[0_4px_15px_rgba(0,102,204,0.4)] hover:shadow-[0_6px_20px_rgba(0,102,204,0.6)] hover:-translate-y-0.5 transition-all duration-300"
-          >Login with AniList</a
-        >
-      </div>
+            <h1>AnilistStream</h1>
 
-      <!-- TOKEN STATE -->
-      <div id="token-state" class="hidden">
-        <div
-          class="mb-4 rounded-xl border-4 border-[var(--border-primary)] backdrop-blur-md p-6 text-left"
-        >
-          <p class="mb-1 text-xs text-[var(--text-muted)]">
-            Connected AniList token
-          </p>
-          <code
-            id="token-display"
-            class="block break-all text-sm text-[var(--primary)]"
-          ></code>
+            <p class="description">
+                Connect your AniList account to install the addon
+            </p>
+
+            <div id="login-state">
+                <a
+                    class="install-btn"
+                    href="https://anilist.co/api/v2/oauth/authorize?client_id={{.ClientID}}&response_type=token"
+                >
+                    Login with AniList
+                </a>
+            </div>
+
+            <div id="token-state" class="hidden">
+                <div class="token-box">
+                    <p class="description">Connected AniList token</p>
+                    <code id="token-display"></code>
+                </div>
+
+                <button id="installBtn" class="install-btn">
+                    Install in Stremio
+                </button>
+            </div>
+
+            <a href="/" class="configure-btn"> ← Back to Home </a>
         </div>
 
-        <button
-          id="installBtn"
-          class="w-full rounded-lg px-7 py-3 font-bold text-white bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] shadow-[0_4px_15px_rgba(0,102,204,0.4)] hover:shadow-[0_6px_20px_rgba(0,102,204,0.6)] hover:-translate-y-0.5 transition-all duration-300"
-        >
-          Install in Stremio
-        </button>
-      </div>
+        <script>
+            const serverUrl = "{{.ServerURL}}";
 
-      <!-- Footer -->
-      <div class="mt-6 text-sm">
-        <a
-          href="/"
-          class="text-[var(--text-subtle)] hover:text-[var(--primary)] transition-colors"
-        >
-          ← Back to Home
-        </a>
-      </div>
-    </div>
+            const loginState = document.getElementById("login-state");
+            const tokenState = document.getElementById("token-state");
+            const tokenDisplay = document.getElementById("token-display");
+            const installBtn = document.getElementById("installBtn");
 
-    <script>
-      (function () {
-        let token = null;
+            let token = null;
 
-        if (window.location.hash.includes("access_token=")) {
-          const params = new URLSearchParams(window.location.hash.substring(1));
-          token = params.get("access_token");
+            if (window.location.hash.includes("access_token=")) {
+                const params = new URLSearchParams(
+                    window.location.hash.substring(1),
+                );
+                token = params.get("access_token");
 
-          if (token) {
-            sessionStorage.setItem("anilist_token", token);
-            history.replaceState(null, "", "/configure");
-          }
-        }
+                if (token) {
+                    sessionStorage.setItem("anilist_token", token);
+                    history.replaceState(null, "", "/configure");
+                }
+            }
 
-        if (!token) {
-          token = sessionStorage.getItem("anilist_token");
-        }
+            if (!token) {
+                token = sessionStorage.getItem("anilist_token");
+            }
 
-        const loginState = document.getElementById("login-state");
-        const tokenState = document.getElementById("token-state");
-        const tokenDisplay = document.getElementById("token-display");
-        const installBtn = document.getElementById("installBtn");
+            function isLocal(url) {
+                return (
+                    url.includes("localhost") ||
+                    url.includes("127.0.0.1") ||
+                    /:\d+/.test(url) ||
+                    url.startsWith("http://")
+                );
+            }
 
-        if (token) {
-          loginState.classList.add("hidden");
-          tokenState.classList.remove("hidden");
+            if (token) {
+                loginState.classList.add("hidden");
+                tokenState.classList.remove("hidden");
 
-          tokenDisplay.textContent =
-            token.slice(0, 6) + "••••••••••••" + token.slice(-4);
+                tokenDisplay.textContent =
+                    token.slice(0, 6) + "••••••••••••" + token.slice(-4);
 
-          installBtn.addEventListener("click", () => {
-            const stremioUrl =
-              "stremio://aniliststream.edmit.in/" +
-              encodeURIComponent(token) +
-              "/manifest.json";
+                installBtn.onclick = () => {
+                    const manifest =
+                        serverUrl +
+                        "/" +
+                        encodeURIComponent(token) +
+                        "/manifest.json";
 
-            window.location.href = stremioUrl;
-          });
-        }
-      })();
-    </script>
-  </body>
+                    if (isLocal(serverUrl)) {
+                        navigator.clipboard.writeText(manifest);
+
+                        installBtn.innerText = "Copied!";
+
+                        setTimeout(() => {
+                            installBtn.innerText = "Install in Stremio";
+                        }, 2000);
+                    } else {
+                        const clean = serverUrl.replace(/^https?:\/\//, "");
+
+                        window.location.href = `stremio://${clean}/${encodeURIComponent(token)}/manifest.json`;
+                    }
+                };
+            }
+        </script>
+    </body>
 </html>

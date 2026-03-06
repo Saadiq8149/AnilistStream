@@ -31,14 +31,22 @@
             "types": ["series"],
             "idPrefixes": ["ani_"]
         },
-        "stream",
-        "subtitles"
+        {
+            "name": "stream",
+            "types": ["series"],
+            "idPrefixes": ["ani_"]
+        },
+        {
+            "name": "subtitles",
+            "types": ["series"],
+            "idPrefixes": ["ani_"]
+        }
     ],
-    "types": ["series", "movie"],
+    "types": ["series"],
     "name": "AnilistStream",
     "description": "Streaming anime and Anilist sync",
     "idPrefixes": ["ani_"],
-    "logo": "https://aniliststream.edmit.in/logo.png",
+    "logo": "http://127.0.0.1:7000/logo.png",
     "behaviorHints": {
         "configurable": true,
         "configurationRequired": false

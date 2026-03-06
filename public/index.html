@@ -1,101 +1,61 @@
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AnilistStream Addon</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="/styles.css" />
-  </head>
+    <head>
+        <meta charset="UTF-8" />
+        <title>AnilistStream</title>
+        <link rel="stylesheet" href="/styles.css" />
+    </head>
 
-  <body
-    class="min-h-screen bg-[var(--bg)] text-[var(--text-main)] flex items-center justify-center px-5 font-[Segoe_UI,Tahoma,Geneva,Verdana,sans-serif]"
-  >
-    <div class="w-full max-w-[600px] text-center">
-      <!-- Title -->
-      <h1 class="mb-3 text-5xl max-sm:text-3xl font-bold">
-        <span class="text-white">Anilist</span
-        ><span class="text-[var(--primary)]">Stream</span>
-      </h1>
+    <body>
+        <div class="container">
+            <img src="/logo.png" class="logo" />
 
-      <!-- Subtitle -->
-      <p class="mb-8 text-[1.1em] text-[var(--text-muted)]">
-        Stream anime directly from Anilist sources in Stremio
-      </p>
+            <h1>AnilistStream</h1>
 
-      <!-- Stats -->
-      <div class="mb-8 grid grid-cols-2 gap-4">
-        <div
-          class="rounded-xl border-4 border-[var(--border-primary)] backdrop-blur-md p-6 transition-all duration-300 hover:bg-[var(--surface-hover)] hover:border-[var(--border-primary-strong)] hover:-translate-y-1"
-        >
-          <div
-            id="rpm-value"
-            class="mb-2 text-[2.5em] max-sm:text-2xl font-bold text-[var(--primary)]"
-          >
-            0
-          </div>
-          <div
-            class="text-[0.95em] uppercase tracking-wider text-[var(--text-dim)]"
-          >
-            Requests
-            <span class="ml-1 text-[0.7em] text-[var(--text-faint)]">
-              per minute
-            </span>
-          </div>
+            <p class="description">
+                Stream anime directly in Stremio with automatic AniList progress
+                syncing.
+            </p>
+
+            <button id="installBtn" class="install-btn">Install Addon</button>
+
+            <a href="/configure" class="configure-btn"> Configure Addon </a>
         </div>
 
-        <div
-          class="rounded-xl border-4 border-[var(--border-primary)] backdrop-blur-md p-6 transition-all duration-300 hover:bg-[var(--surface-hover)] hover:border-[var(--border-primary-strong)] hover:-translate-y-1"
-        >
-          <div
-            id="users-value"
-            class="mb-2 text-[2.5em] max-sm:text-2xl font-bold text-[var(--primary)]"
-          >
-            0
-          </div>
-          <div
-            class="text-[0.95em] uppercase tracking-wider text-[var(--text-dim)]"
-          >
-            Active
-            <span class="ml-1 text-[0.7em] text-[var(--text-faint)]">
-              users
-            </span>
-          </div>
-        </div>
-      </div>
+        <footer>Powered by AniList</footer>
 
-      <!-- Install button -->
-      <a
-        href="stremio://aniliststream.edmit.in/manifest.json"
-        class="inline-block rounded-lg px-8 py-4 max-sm:px-6 max-sm:py-3 text-white font-bold bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] shadow-[0_4px_15px_rgba(0,102,204,0.4)] hover:shadow-[0_6px_20px_rgba(0,102,204,0.6)] hover:-translate-y-0.5 transition-all duration-300"
-      >
-        Install in Stremio
-      </a>
+        <script>
+            const serverUrl = "{{.ServerURL}}";
+            const manifestUrl = serverUrl + "/manifest.json";
+            const btn = document.getElementById("installBtn");
 
-      <!-- Footer -->
-      <div class="mt-6 text-sm text-[var(--text-footer)]">
-        <a
-          href="/configure"
-          class="text-[var(--text-subtle)] hover:text-[var(--primary)] transition-colors"
-        >
-          Advanced configuration
-        </a>
-      </div>
-    </div>
+            function isLocal(url) {
+                return (
+                    url.includes("localhost") ||
+                    url.includes("127.0.0.1") ||
+                    /:\d+/.test(url) ||
+                    url.startsWith("http://")
+                );
+            }
 
-    <script>
-      async function updateStats() {
-        try {
-          const response = await fetch("/api/stats");
-          const data = await response.json();
-          document.getElementById("rpm-value").textContent = data.rpm;
-          document.getElementById("users-value").textContent = data.activeUsers;
-        } catch (error) {
-          console.error("Failed to fetch stats:", error);
-        }
-      }
+            if (isLocal(serverUrl)) {
+                btn.innerText = "Copy Manifest URL";
 
-      updateStats();
-      setInterval(updateStats, 1000);
-    </script>
-  </body>
+                btn.onclick = async () => {
+                    await navigator.clipboard.writeText(manifestUrl);
+                    btn.innerText = "Copied!";
+
+                    setTimeout(() => {
+                        btn.innerText = "Copy Manifest URL";
+                    }, 2000);
+                };
+            } else {
+                const clean = serverUrl.replace(/^https?:\/\//, "");
+
+                btn.onclick = () => {
+                    window.location.href = `stremio://${clean}/manifest.json`;
+                };
+            }
+        </script>
+    </body>
 </html>
