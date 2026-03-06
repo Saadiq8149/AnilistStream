@@ -84,8 +84,7 @@ To get Kitsu Catalog support, you need to obtain an API key from IdsMoe:
 Planned improvements and upcoming features:
 
 - [ ]  Redis caching layer for faster metadata and stream resolution
-- [x]  CI/CD pipeline with GitHub Actions (build, test, Docker publish)
-- [x]  Kitsu support
+- [ ]  Fixing double updates to Anilist Updating Episode x and x+1 at once causing errors/issues
 - [ ]  More Lists (Trending, Planning, Watching)
 <img src="https://img.shields.io/github/issues/Saadiq8149/AnilistStream?style=for-the-badge" />
 
