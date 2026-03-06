@@ -14,7 +14,6 @@
 
 <p align="center">
   <img src="https://img.shields.io/github/stars/Saadiq8149/AnilistStream?style=for-the-badge&logo=github" alt="GitHub Stars" />
-  <img src="https://img.shields.io/docker/pulls/12345saadiq/aniliststream?style=for-the-badge&logo=docker" alt="Docker Pulls" />
   <img src="https://img.shields.io/github/go-mod/go-version/Saadiq8149/AnilistStream?style=for-the-badge&logo=go" alt="Go Version" />
   <img src="https://img.shields.io/badge/Stremio-Addon-blue?style=for-the-badge&logo=stremio" alt="Stremio Addon" />
 </p>
@@ -22,6 +21,9 @@
 <p align="center">
   <a href="https://aniliststream.edmit.in">
     <img src="https://img.shields.io/badge/⚡%20Install%20Now-AnilistStream-6441A5?style=for-the-badge&logo=stremio&logoColor=white" alt="Install AnilistStream" />
+  </a>
+  <a href="https://hub.docker.com/r/12345saadiq/aniliststream">
+    <img src="https://img.shields.io/badge/Docker%20Hub-12345saadiq%2Faniliststream-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Hub Repository" />
   </a>
 </p>
 
