@@ -23,24 +23,6 @@
 
 ---
 
-## Install (Public Instance)
-
-The easiest way to get started is to use the hosted public instance.
-
-<p align="center">
-  <a href="https://aniliststream.edmit.in">
-    <img src="https://img.shields.io/badge/Open%20Configuration%20Page-aniliststream.edmit.in-6441A5?style=for-the-badge&logo=stremio&logoColor=white" />
-  </a>
-</p>
-
-1. Visit **[https://aniliststream.edmit.in](https://aniliststream.edmit.in)**
-2. Optionally log in with your **AniList account** to enable watch progress syncing
-3. Click **Install Addon** to add it to Stremio
-
-> **Note:** The public instance is community-maintained. For guaranteed uptime or custom configuration, consider self-hosting.
-
----
-
 ## Self Hosting
 
 ### Docker
