@@ -26,7 +26,6 @@ func RegisterRoutes(r chi.Router, metadataService *metadata.MetadataService, sou
 	r.Get("/{anilist_token}/stream/{type}/{id}.json", s.StreamHandler)
 
 	r.Handle("/logo.png", http.FileServer(http.Dir("./public")))
-	r.Handle("/styles.css", http.FileServer(http.Dir("./public")))
 	r.Handle("/manifest.json", http.FileServer(http.Dir("./public")))
 
 	r.Get("/", pages.IndexHandler)

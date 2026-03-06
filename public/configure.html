@@ -3,10 +3,104 @@
     <head>
         <meta charset="UTF-8" />
         <title>Configure AnilistStream</title>
-
-        <link rel="stylesheet" href="/styles.css" />
     </head>
 
+    <style>
+        :root {
+            --bg: #000000;
+            --primary: #0066cc;
+            --primary-dark: #0052a3;
+            --text-main: #eeeeee;
+            --text-muted: #aaaaaa;
+            --text-footer: #555555;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text-main);
+            font-family:
+                system-ui,
+                -apple-system,
+                sans-serif;
+        }
+
+        .container {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 18px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 110px;
+        }
+
+        h1 {
+            font-size: 42px;
+            margin: 0;
+        }
+
+        .description {
+            color: var(--text-muted);
+            max-width: 420px;
+            line-height: 1.5;
+        }
+
+        .install-btn {
+            background: var(--primary);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .install-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        footer {
+            text-align: center;
+            color: var(--text-footer);
+            padding-bottom: 30px;
+        }
+
+        .configure-btn {
+            margin-top: 10px;
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .configure-btn:hover {
+            color: var(--primary);
+        }
+
+        .token-box {
+            border: 1px solid var(--border-primary);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .install-btn {
+            text-decoration: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
     <body>
         <div class="container">
             <img src="/logo.png" class="logo" />
