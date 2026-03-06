@@ -57,5 +57,9 @@
             "type": "text",
             "required": true
         }
-    ]
+    ],
+    "stremioAddonsConfig": {
+        "issuer": "https://stremio-addons.net",
+        "signature": "eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0..gQGcTjfG_NCmlDNgy_Vxrg.CO-kPziGGJd0Yx4CF_h-K81eU5Yq4tgAKH1fyG6mwK06BnUUl7ERlq7ydTOLOXhM8uRKGTU2dVp-KrOqv1Yw6iSWZOmyv1MEFoR1R5qIw3FYhGtJpAGV0O5i4IfOqe9X.3AfKZViUDVGttkQEjzLvQQ"
+    }
 }
