@@ -103,6 +103,16 @@ Users can then log in from the web UI to authorize progress syncing.
 
 ---
 
+## Roadmap / TODO
+
+Planned improvements and upcoming features:
+
+- [ ]  Redis caching layer for faster metadata and stream resolution
+- [ ]  CI/CD pipeline with GitHub Actions (build, test, Docker publish)
+- [ ]  Higher quality poster images
+- [ ]  Better background images for catalog and metadata views
+<img src="https://img.shields.io/github/issues/Saadiq8149/AnilistStream?style=for-the-badge" />
+
 ## Architecture
 
 AnilistStream uses a **modular provider architecture** that cleanly separates concerns:
