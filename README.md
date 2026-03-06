@@ -71,7 +71,7 @@ Pull and run the latest image from Docker Hub.
 Refer to the Configuration section below or copy `.env.example` to create your `.env` file.
 
 ```bash
-docker run -d --name aniliststream -p 7000:7000 --env-file .env 12345saadiq/aniliststream:latest
+docker pull 12345saadiq/aniliststream:latest && docker rm -f aniliststream 2>/dev/null || true && docker run -d --restart unless-stopped --name aniliststream -p 7000:7000 --env-file /.env 12345saadiq/aniliststream:latest
 ```
 
 ---
