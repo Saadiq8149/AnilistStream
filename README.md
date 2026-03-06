@@ -109,9 +109,10 @@ Planned improvements and upcoming features:
 
 - [ ]  Redis caching layer for faster metadata and stream resolution
 - [ ]  CI/CD pipeline with GitHub Actions (build, test, Docker publish)
-- [ ]  Higher quality poster images
 - [ ]  Better background images for catalog and metadata views
 - [ ]  Kitsu support
+- [ ]  Episode Data (Titles, Dates and Thumbnails)
+- [ ]  More Lists (Trending, Planning, Watching)
 <img src="https://img.shields.io/github/issues/Saadiq8149/AnilistStream?style=for-the-badge" />
 
 ## Architecture
