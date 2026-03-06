@@ -34,10 +34,8 @@ Originally ported from a Node.js implementation, the Go version is built around 
 ## Features
 
 - 🎬 **HTTP-based streams** — direct video streams, no torrents or P2P required
-- 📋 **AniList integration** — rich metadata including titles, descriptions, cover art, ratings, and airing status
 - 🔄 **Watch progress syncing** — log in with AniList OAuth to automatically track and sync watched episodes
 - 🧩 **Modular provider architecture** — easily extend or replace metadata and stream providers
-- 🌐 **Built-in web UI** — configure your addon and generate an install link directly from the browser
 - 🐳 **Docker support** — single-container deployment with a public image on Docker Hub
 - ☁️ **Public instance available** — use it immediately without self-hosting
 - ⚙️ **Self-hostable** — full control over your own instance
