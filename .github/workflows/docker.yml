@@ -3,6 +3,14 @@ name: Build and Push Docker Image
 on:
     push:
         branches: [main]
+        paths:
+            - "Dockerfile"
+            - "go.mod"
+            - "go.sum"
+            - "main.go"
+            - "internal/**"
+            - "public/**"
+            - ".github/workflows/**"
 
 jobs:
     docker:
@@ -23,3 +31,5 @@ jobs:
               with:
                   push: true
                   tags: 12345saadiq/aniliststream:latest
+                  cache-from: type=gha
+                  cache-to: type=gha,mode=max
