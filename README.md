@@ -10,7 +10,6 @@
 
 <p align="center">
   <img src="https://img.shields.io/github/stars/Saadiq8149/AnilistStream?style=for-the-badge&logo=github" alt="GitHub Stars" />
-  <img src="https://img.shields.io/github/license/Saadiq8149/AnilistStream?style=for-the-badge" alt="License" />
   <img src="https://img.shields.io/docker/pulls/12345saadiq/aniliststream?style=for-the-badge&logo=docker" alt="Docker Pulls" />
   <img src="https://img.shields.io/github/go-mod/go-version/Saadiq8149/AnilistStream?style=for-the-badge&logo=go" alt="Go Version" />
   <img src="https://img.shields.io/badge/Stremio-Addon-blue?style=for-the-badge&logo=stremio" alt="Stremio Addon" />
@@ -67,20 +66,17 @@ The easiest way to get started is to use the hosted public instance.
 
 ### Docker
 
-Pull and run the latest image from Docker Hub:
+Pull and run the latest image from Docker Hub.
 
-```bash
-docker pull 12345saadiq/aniliststream:latest
-```
+Refer to the Configuration section below or copy `.env.example` to create your `.env` file.
 
 ```bash
 docker run -d \
   --name aniliststream \
-  -p 8080:8080 \
+  -p 7000:7000 \
+  --env-file .env \
   12345saadiq/aniliststream:latest
 ```
-
-The web UI and addon endpoint will be available at `http://localhost:8080`.
 
 ---
 
@@ -89,20 +85,15 @@ The web UI and addon endpoint will be available at `http://localhost:8080`.
 Create a `docker-compose.yml` file:
 
 ```yaml
-version: "3.8"
 
 services:
   aniliststream:
     image: 12345saadiq/aniliststream:latest
     container_name: aniliststream
     ports:
-      - "8080:8080"
-    environment:
-      - PORT=8080
-      # Optional: set your AniList OAuth client credentials
-      # - ANILIST_CLIENT_ID=your_client_id
-      # - ANILIST_CLIENT_SECRET=your_client_secret
-      # - ANILIST_REDIRECT_URI=http://localhost:8080/callback
+      - "7000:7000"
+    env_file:
+      - .env
     restart: unless-stopped
 ```
 
@@ -134,7 +125,7 @@ go mod download
 go run .
 ```
 
-The server will start on `http://localhost:8080` by default.
+The server will start on `http://localhost:7000` by default.
 
 To build a binary:
 
@@ -147,14 +138,17 @@ go build -o aniliststream .
 
 ## Configuration
 
-Configuration is handled via **environment variables**. You can set these in your shell, a `.env` file, or your Docker Compose configuration.
+Configuration is handled via **environment variables**. You can set these in your `.env` file.
 
 | Variable | Default | Description |
 |---|---|---|
-| `PORT` | `8080` | Port the server listens on |
+| `PORT` | `7000` | Port the server listens on |
+| `SERVER_URL` | `http://127.0.0.1:7000` | Url the server runs on |
 | `ANILIST_CLIENT_ID` | — | AniList OAuth application client ID |
-| `ANILIST_CLIENT_SECRET` | — | AniList OAuth application client secret |
-| `ANILIST_REDIRECT_URI` | — | OAuth redirect URI (must match your AniList app settings) |
+| `METADATA_PROVIDER` |`ANILIST or ALL_ANIME` | Pick one, Anilist Better | 
+| `SOURCE_PROVIDERS` |`ALL_ANIME` | Comma separated providers if multiple available | 
+
+
 
 ### AniList OAuth Setup
 
@@ -162,8 +156,8 @@ To enable watch progress syncing, you need to register an AniList API applicatio
 
 1. Go to [https://anilist.co/settings/developer](https://anilist.co/settings/developer)
 2. Click **Create new client**
-3. Set the **Redirect URL** to your instance's callback URL (e.g. `http://localhost:8080/callback`)
-4. Copy the **Client ID** and **Client Secret** into your environment variables
+3. Set the **Redirect URL** to your instance's callback URL (`{SERVER_URL}/configure`)
+4. Copy the **Client ID** into your environment variables
 
 Users can then log in from the web UI to authorize progress syncing.
 
@@ -172,31 +166,7 @@ Users can then log in from the web UI to authorize progress syncing.
 ## Architecture
 
 AnilistStream uses a **modular provider architecture** that cleanly separates concerns:
-
-```
-┌──────────────────────────────────────────────────────┐
-│                   Stremio Client                     │
-└────────────────────────┬─────────────────────────────┘
-                         │  HTTP (addon protocol)
-┌────────────────────────▼─────────────────────────────┐
-│               AnilistStream Server (Go)               │
-│                                                      │
-│  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐ │
-│  │   Catalog   │  │     Meta     │  │   Stream    │ │
-│  │  Handler   │  │   Handler   │  │   Handler  │ │
-│  └──────┬──────┘  └──────┬───────┘  └──────┬────┘ │
-│         │                │                  │       │
-│  ┌──────▼──────────────────▼────────────────▼────┐  │
-│  │              Provider Interface               │  │
-│  └──────┬──────────────────┬────────────────┬────┘  │
-│         │                  │                │       │
-│  ┌──────▼──────┐  ┌────────▼───────┐  ┌────▼─────┐ │
-│  │   AniList   │  │   AllAnime     │  │AllAnime  │ │
-│  │  (metadata) │  │  (metadata)    │  │(streams) │ │
-│  └─────────────┘  └────────────────┘  └──────────┘ │
-└──────────────────────────────────────────────────────┘
-```
-
+      
 **Provider types:**
 
 - **Metadata Providers** — Supply catalog and episode metadata (AniList, AllAnime)
@@ -210,20 +180,21 @@ New providers can be implemented by satisfying the provider interface, with no c
 
 ```
 AnilistStream/
-├── main.go                 # Entry point, server setup
-├── go.mod / go.sum         # Go module files
-├── handlers/               # Stremio addon endpoint handlers
-│   ├── catalog.go          # /catalog endpoint
-│   ├── meta.go             # /meta endpoint
-│   └── stream.go           # /stream endpoint
-├── providers/              # Provider interface + implementations
-│   ├── provider.go         # Shared provider interface
-│   ├── anilist/            # AniList metadata provider
-│   └── allanime/           # AllAnime metadata + stream provider
-├── anilist/                # AniList OAuth + API client
-├── web/                    # Static web UI (install + configuration)
-│   └── static/
-└── config/                 # Configuration loading
+├── main.go                     # Application entry point
+│
+├── internal/                   # Core application logic
+│   ├── anilist/                # AniList OAuth + API client
+│   ├── cache/                  # Caching utilities
+│   ├── handlers/               # HTTP handlers and routing
+│   │   └── routes.go
+│   ├── metadata/               # Metadata provider implementations
+│   ├── pages/                  # HTML page handlers (index, configure)
+│   ├── streams/                # Stream provider implementations
+│   ├── stremio/                # Stremio addon protocol logic
+│   ├── types/                  # Shared data structures
+│   └── util/                   # Utility helpers
+│                  
+└── public/                     # Static frontend asset
 ```
 
 ---
@@ -257,9 +228,9 @@ docker build -t aniliststream .
 
 ### Adding a New Provider
 
-1. Create a new package under `providers/yourprovider/`
-2. Implement the `MetadataProvider` and/or `StreamProvider` interface defined in `providers/provider.go`
-3. Register the provider in `main.go`
+1. Create a new provider under `metadata/yourprovider/` or `streams/yourprovider`
+2. Implement the `MetadataProvider` and/or `StreamProvider` interface defined in `metadata/provider.go` or `streams/provider.go`
+3. Register the provider in `provider.go`
 
 ---
 
