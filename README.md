@@ -23,24 +23,6 @@
 
 ---
 
-## Overview
-
-**AnilistStream** is a [Stremio](https://www.stremio.com/) addon for streaming anime from multiple HTTP sources (no torrents, no P2P) while keeping your AniList watch list in sync. Originally ported from a Node.js implementation to Go, it features a modular provider architecture for easily adding or swapping metadata and stream sources, and can be fully self-hosted via Docker or from source.
-
-Originally ported from a Node.js implementation, the Go version is built around a **modular provider architecture**, making it straightforward to add or swap metadata and stream sources. It ships with a built-in static web UI for configuration and addon installation, and is fully self-hostable via Docker or from source.
-
----
-## Features
-
-- 🎬 **HTTP-based streams** — direct video streams, no torrents or P2P required
-- 🔄 **Watch progress syncing** — log in with AniList OAuth to automatically track and sync watched episodes
-- 🧩 **Modular provider architecture** — easily extend or replace metadata and stream providers
-- 🐳 **Docker support** — single-container deployment with a public image on Docker Hub
-- ☁️ **Public instance available** — use it immediately without self-hosting
-- ⚙️ **Self-hostable** — full control over your own instance
-
----
-
 ## Install (Public Instance)
 
 The easiest way to get started is to use the hosted public instance.
@@ -112,17 +94,6 @@ Planned improvements and upcoming features:
 - [ ]  More Lists (Trending, Planning, Watching)
 <img src="https://img.shields.io/github/issues/Saadiq8149/AnilistStream?style=for-the-badge" />
 
-## Architecture
-
-AnilistStream uses a **modular provider architecture** that cleanly separates concerns:
-      
-**Provider types:**
-
-- **Metadata Providers** — Supply catalog and episode metadata (AniList, AllAnime)
-- **Stream Providers** — Return playable HTTP stream URLs for a given episode (AllAnime)
-
-New providers can be implemented by satisfying the provider interface, with no changes required to the core addon logic.
-
 ---
 
 ## Project Structure
@@ -156,19 +127,6 @@ AnilistStream/
 2. Implement the `MetadataProvider` and/or `StreamProvider` interface defined in `metadata/provider.go` or `streams/provider.go`
 3. Register the provider in `provider.go`
 
----
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. **Fork** the repository
-2. **Create** a feature branch: `git checkout -b feat/your-feature`
-3. **Commit** your changes: `git commit -m "feat: add your feature"`
-4. **Push** to your fork: `git push origin feat/your-feature`
-5. **Open** a Pull Request against `main`
-
-Please open an issue first for major changes or new providers so the approach can be discussed before implementation.
 
 ---
 
