@@ -41,7 +41,7 @@ docker pull 12345saadiq/aniliststream:latest && docker rm -f aniliststream 2>/de
 
 Configuration is handled via **environment variables**. You can set these in your `.env` file.
 
-| Variable | Default | Description |
+| Variable | Format/Options | Description |
 |---|---|---|
 | `PORT` | `7000` | Port the server listens on |
 | `SERVER_URL` | `http://127.0.0.1:7000` | Url the server runs on |
