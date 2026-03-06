@@ -29,10 +29,9 @@ func RegisterRoutes(r chi.Router, metadataService *metadata.MetadataService, sou
 	r.Handle("/manifest.json", http.FileServer(http.Dir("./public")))
 
 	r.Get("/", pages.IndexHandler)
+	r.Get("/{anilist_token}", pages.IndexHandler)
 	r.Get("/configure", pages.ConfigureHandler)
-	r.Get("/{anilist_token}", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./public/index.html")
-	})
+	r.Get("/{anilist_token}/configure", pages.ConfigureHandler)
 	r.Get("/{anilist_token}/manifest.json", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./public/manifest.json")
 	})
