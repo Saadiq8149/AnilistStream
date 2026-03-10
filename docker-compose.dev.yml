@@ -1,7 +1,6 @@
 services:
     aniliststream:
         build: .
-        container-name: aniliststream
         ports:
             - "7000:7000"
         env_file:
