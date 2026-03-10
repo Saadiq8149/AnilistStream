@@ -1,7 +1,7 @@
 services:
     aniliststream:
-        image: 12345saadiq/aniliststream:latest
-        container_name: aniliststream
+        build: .
+        container-name: aniliststream
         ports:
             - "7000:7000"
         env_file:
@@ -13,5 +13,5 @@ services:
     redis:
         image: redis:7-alpine
         container_name: aniliststream-redis
-        command: redis-server --save "" --appendonly no --maxmemory 256mb --maxmemory-policy allkeys-lru
+        command: redis-server --save "" --appendonly no --maxmemory 256mb --maxmemory-policy allkeys-lru --loglevel warning
         restart: unless-stopped
