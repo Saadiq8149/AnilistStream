@@ -5,6 +5,7 @@ import (
 	"anilist-stream/internal/idmap"
 	"anilist-stream/internal/metadata"
 	"anilist-stream/internal/pages"
+	"anilist-stream/internal/redis"
 	"anilist-stream/internal/streams"
 	"anilist-stream/internal/stremio"
 	"net/http"
@@ -12,8 +13,13 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func RegisterRoutes(r chi.Router, metadataService *metadata.MetadataService, sourceService *streams.SourceService, anilistService *anilist.AnilistService, idMapService *idmap.IDMapService) {
-	s := stremio.NewStremioHandler(metadataService, sourceService, anilistService, idMapService)
+func RegisterRoutes(r chi.Router, metadataService *metadata.MetadataService, sourceService *streams.SourceService, anilistService *anilist.AnilistService, idMapService *idmap.IDMapService, redisService *redis.RedisService) {
+	s := stremio.NewStremioHandler(
+		metadataService,
+		sourceService,
+		anilistService,
+		idMapService,
+		redisService)
 
 	r.Get("/catalog/{type}/{id}.json", s.CatalogHandler)
 	r.Get("/{anilist_token}/catalog/{type}/{id}.json", s.CatalogHandler)

@@ -5,6 +5,7 @@ import (
 	"anilist-stream/internal/handlers"
 	"anilist-stream/internal/idmap"
 	"anilist-stream/internal/metadata"
+	"anilist-stream/internal/redis"
 	"anilist-stream/internal/streams"
 	"fmt"
 	"net/http"
@@ -13,12 +14,12 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	// dev
 	// "github.com/joho/godotenv"
 )
 
 func cors(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Headers", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
@@ -32,6 +33,7 @@ func cors(next http.Handler) http.Handler {
 }
 
 func main() {
+	// dev
 	// if err := godotenv.Load(); err != nil {
 	// 	panic(err)
 	// }
@@ -45,8 +47,21 @@ func main() {
 	sourceService := streams.NewSourceService()
 	anilistService := anilist.NewAnilistService()
 	idMapService := idmap.NewIDMapService()
-	handlers.RegisterRoutes(r, metadataService, sourceService, anilistService, idMapService)
+	redisService := redis.NewRedisService(os.Getenv("REDIS_ADDR"))
 
+	handlers.RegisterRoutes(
+		r,
+		metadataService,
+		sourceService,
+		anilistService,
+		idMapService,
+		redisService)
+
+	// prod
 	fmt.Println("server running on :" + os.Getenv("PORT"))
 	http.ListenAndServe(":"+os.Getenv("PORT"), r)
+
+	// dev
+	// fmt.Println("server running on 127.0.0.1:" + os.Getenv("PORT"))
+	// http.ListenAndServe("127.0.0.1:"+os.Getenv("PORT"), r)
 }

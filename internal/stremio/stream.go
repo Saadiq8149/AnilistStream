@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -69,7 +70,17 @@ func (s *StremioHandler) StreamHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if anilistToken != "" {
-		s.AnilistService.SyncProgress(anilistID, episode, anilistToken)
+		// to prevent syncing the prefetched episode by stemio, which user hasn't actually watched
+		skipSync, err := s.RedisService.Exists("sync:" + anilistID)
+		if err != nil {
+			http.Error(w, "Redis error", http.StatusInternalServerError)
+			return
+		}
+
+		if !skipSync {
+			s.AnilistService.SyncProgress(anilistID, episode, anilistToken)
+			s.RedisService.Set("sync:"+anilistID, episode, 1*time.Second)
+		}
 	}
 
 	sources, err := s.SourceService.GetStreams(anilistID, malID, episode)

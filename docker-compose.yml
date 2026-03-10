@@ -5,4 +5,12 @@ services:
             - "7000:7000"
         env_file:
             - .env
+        depends_on:
+            - redis
         restart: unless-stopped
+
+    redis:
+        image: redis:7-alpine
+        container_name: aniliststream-redis
+        restart: unless-stopped
+        command: redis-server --save "" --appendonly no --maxmemory 1024mb --maxmemory-policy allkeys-lru --loglevel warning
