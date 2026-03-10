@@ -5,8 +5,10 @@ import (
 	"anilist-stream/internal/util"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -17,6 +19,17 @@ func (s *StremioHandler) CatalogHandler(w http.ResponseWriter, r *http.Request) 
 	if extra != "" {
 		extra = strings.TrimSuffix(extra, ".json")
 		searchQuery := strings.TrimPrefix(extra, "search=")
+
+		cacheKey := "catalog:search:" + searchQuery
+
+		var cached types.CatalogResponse
+		found, err := s.RedisService.GetJSON(cacheKey, &cached)
+		if err == nil && found {
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Cache-Control", "max-age=3600")
+			json.NewEncoder(w).Encode(cached)
+			return
+		}
 
 		anime, err := s.MetadataService.Provider.SearchAnime(searchQuery)
 		if err != nil {
@@ -39,6 +52,7 @@ func (s *StremioHandler) CatalogHandler(w http.ResponseWriter, r *http.Request) 
 			}
 
 			description := util.StripHTML(a.Description)
+
 			meta := types.MetaPreview{
 				ID:          fmt.Sprintf("ani_%s_%s_%s", a.AnilistID, a.ProviderID, a.MalID),
 				Type:        "series",
@@ -56,6 +70,10 @@ func (s *StremioHandler) CatalogHandler(w http.ResponseWriter, r *http.Request) 
 		response := types.CatalogResponse{
 			Metas: metas,
 		}
+
+		ttl := 24*time.Hour + time.Duration(rand.Intn(3600))*time.Second
+
+		_ = s.RedisService.SetJSON(cacheKey, response, ttl)
 
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Cache-Control", "max-age=3600")

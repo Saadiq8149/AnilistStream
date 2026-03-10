@@ -17,6 +17,9 @@ type MetadataService struct {
 
 func NewMetadataService() *MetadataService {
 	selectedProvider := os.Getenv("METADATA_PROVIDER")
+	if selectedProvider == "" {
+		selectedProvider = "ANILIST" // Default provider
+	}
 
 	switch selectedProvider {
 	case "ANILIST":

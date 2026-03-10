@@ -39,13 +39,24 @@ func (s *StremioHandler) StreamHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		idMap, err := s.IDMapService.GetIDMap(kitsuID, "kitsu")
-		if err != nil {
-			http.Error(w, "ID mapping failed", http.StatusInternalServerError)
-			return
+		cachedAniListID, err := s.RedisService.Get("idmap:kitsu:" + kitsuID)
+		if err == nil && cachedAniListID != "" {
+			anilistID = cachedAniListID
+		} else {
+			idMap, err := s.IDMapService.GetIDMap(kitsuID, "kitsu")
+			if err != nil {
+				http.Error(w, "ID mapping failed", http.StatusInternalServerError)
+				return
+			}
+
+			anilistID = idMap["anilist"]
+			if anilistID == "" {
+				http.Error(w, "ID mapping not found", http.StatusNotFound)
+				return
+			}
+			s.RedisService.Set("idmap:kitsu:"+kitsuID, anilistID, 30*24*time.Hour)
 		}
 
-		anilistID = idMap["anilist"]
 	} else {
 		parts := strings.Split(idParam, "%3A")
 

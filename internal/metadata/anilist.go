@@ -9,10 +9,16 @@ import (
 	"time"
 )
 
-type AnilistProvider struct{}
+type AnilistProvider struct {
+	client *http.Client
+}
 
 func NewAnilistProvider() *AnilistProvider {
-	return &AnilistProvider{}
+	return &AnilistProvider{
+		client: &http.Client{
+			Timeout: 10 * time.Second,
+		},
+	}
 }
 
 func (a *AnilistProvider) Name() string {
@@ -71,11 +77,7 @@ func (a *AnilistProvider) SearchAnime(query string) ([]types.Metadata, error) {
 
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{
-		Timeout: 10 * time.Second,
-	}
-
-	resp, err := client.Do(req)
+	resp, err := a.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -138,8 +140,9 @@ func (a *AnilistProvider) SearchAnime(query string) ([]types.Metadata, error) {
 		}
 
 		episodes := anime.Episodes
+
 		if anime.Status != "FINISHED" {
-			if anime.NextAiringEpisode.Episode > 0 {
+			if anime.NextAiringEpisode != nil && anime.NextAiringEpisode.Episode > 0 {
 				episodes = anime.NextAiringEpisode.Episode - 1
 			} else {
 				episodes = 0
@@ -220,9 +223,7 @@ func (a *AnilistProvider) GetAnime(id string) (types.Metadata, error) {
 
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{Timeout: 10 * time.Second}
-
-	resp, err := client.Do(req)
+	resp, err := a.client.Do(req)
 	if err != nil {
 		return types.Metadata{}, err
 	}
@@ -279,9 +280,11 @@ func (a *AnilistProvider) GetAnime(id string) (types.Metadata, error) {
 	if title == "" {
 		title = anime.Title.Romaji
 	}
+
 	episodes := anime.Episodes
+
 	if anime.Status != "FINISHED" {
-		if anime.NextAiringEpisode.Episode > 0 {
+		if anime.NextAiringEpisode != nil && anime.NextAiringEpisode.Episode > 0 {
 			episodes = anime.NextAiringEpisode.Episode - 1
 		} else {
 			episodes = 0
