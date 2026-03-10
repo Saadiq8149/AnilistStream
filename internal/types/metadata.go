@@ -13,4 +13,5 @@ type Metadata struct {
 	Rating      float64
 	Episodes    int
 	Genres      []string
+	Status      string
 }

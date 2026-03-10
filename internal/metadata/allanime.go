@@ -57,6 +57,7 @@ func (p *AllAnimeProvider) SearchAnime(query string) ([]types.Metadata, error) {
 				episodeCount
 				airedStart
 				airedEnd
+				status
 			}
 		}
 	}`
@@ -108,6 +109,7 @@ func (p *AllAnimeProvider) SearchAnime(query string) ([]types.Metadata, error) {
 					AniListID   string   `json:"aniListId"`
 					MalID       string   `json:"malId"`
 					EpisodeCnt  string   `json:"episodeCount"`
+					Status      string   `json:"status"`
 				} `json:"edges"`
 			} `json:"shows"`
 		} `json:"data"`
@@ -142,6 +144,7 @@ func (p *AllAnimeProvider) SearchAnime(query string) ([]types.Metadata, error) {
 			Rating:      anime.Score,
 			Episodes:    episodes,
 			Genres:      anime.Genres,
+			Status:      anime.Status,
 		}
 
 		metadata = append(metadata, meta)
@@ -168,6 +171,7 @@ func (p *AllAnimeProvider) GetAnime(id string) (types.Metadata, error) {
 			episodeCount
 			airedStart
 			airedEnd
+			status
 		}
 	}`
 
@@ -214,6 +218,7 @@ func (p *AllAnimeProvider) GetAnime(id string) (types.Metadata, error) {
 				AniListID   string   `json:"aniListId"`
 				MalID       string   `json:"malId"`
 				EpisodeCnt  string   `json:"episodeCount"`
+				Status      string   `json:"status"`
 			} `json:"show"`
 		} `json:"data"`
 	}
@@ -246,7 +251,7 @@ func (p *AllAnimeProvider) GetAnime(id string) (types.Metadata, error) {
 		Rating:      anime.Score,
 		Episodes:    episodes,
 		Genres:      anime.Genres,
+		Status:      anime.Status,
 	}
-
 	return meta, nil
 }

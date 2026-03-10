@@ -162,6 +162,7 @@ func (a *AnilistProvider) SearchAnime(query string) ([]types.Metadata, error) {
 			Rating:      float64(anime.AverageScore) / 10,
 			Episodes:    episodes,
 			Genres:      anime.Genres,
+			Status:      anime.Status,
 		})
 	}
 
@@ -304,6 +305,7 @@ func (a *AnilistProvider) GetAnime(id string) (types.Metadata, error) {
 		Rating:      float64(anime.AverageScore) / 10,
 		Episodes:    episodes,
 		Genres:      anime.Genres,
+		Status:      anime.Status,
 	}
 
 	return meta, nil

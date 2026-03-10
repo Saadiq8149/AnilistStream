@@ -3,6 +3,7 @@ package stremio
 import (
 	"anilist-stream/internal/types"
 	"encoding/json"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
@@ -39,6 +40,7 @@ func (s *StremioHandler) StreamHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// first check Redis cache for AniList ID mapping
 		cachedAniListID, err := s.RedisService.Get("idmap:kitsu:" + kitsuID)
 		if err == nil && cachedAniListID != "" {
 			anilistID = cachedAniListID
@@ -54,7 +56,7 @@ func (s *StremioHandler) StreamHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "ID mapping not found", http.StatusNotFound)
 				return
 			}
-			s.RedisService.Set("idmap:kitsu:"+kitsuID, anilistID, 30*24*time.Hour)
+			s.RedisService.Set("idmap:kitsu:"+kitsuID, anilistID, 90*24*time.Hour)
 		}
 
 	} else {
@@ -93,6 +95,15 @@ func (s *StremioHandler) StreamHandler(w http.ResponseWriter, r *http.Request) {
 			s.RedisService.Set("sync:"+anilistID, episode, 1*time.Second)
 		}
 	}
+	cacheKey := "streams:" + anilistID + ":" + malID + ":" + strconv.Itoa(episode)
+
+	var cached types.StreamResponse
+	found, err := s.RedisService.GetJSON(cacheKey, &cached)
+	if err == nil && found {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(cached)
+		return
+	}
 
 	sources, err := s.SourceService.GetStreams(anilistID, malID, episode)
 	if err != nil {
@@ -130,6 +141,11 @@ func (s *StremioHandler) StreamHandler(w http.ResponseWriter, r *http.Request) {
 
 	response := types.StreamResponse{
 		Streams: streams,
+	}
+
+	if len(streams) > 0 {
+		ttl := 30*time.Minute + time.Duration(rand.Intn(120))*time.Second
+		s.RedisService.SetJSON(cacheKey, response, ttl)
 	}
 
 	w.Header().Set("Content-Type", "application/json")

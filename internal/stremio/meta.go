@@ -5,8 +5,10 @@ import (
 	"anilist-stream/internal/util"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -14,6 +16,15 @@ import (
 func (s *StremioHandler) MetaHandler(w http.ResponseWriter, r *http.Request) {
 	idParam := chi.URLParam(r, "id")
 	idParam = strings.TrimSuffix(idParam, ".json")
+
+	cacheKey := "meta:" + idParam
+	var cached types.MetaResponse
+	found, err := s.RedisService.GetJSON(cacheKey, &cached)
+	if err == nil && found {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(cached)
+		return
+	}
 
 	parts := strings.Split(idParam, "_")
 	if len(parts) != 4 {
@@ -67,6 +78,12 @@ func (s *StremioHandler) MetaHandler(w http.ResponseWriter, r *http.Request) {
 
 	response := types.MetaResponse{
 		Meta: meta,
+	}
+
+	// Cache only if anime is finished
+	if anime.Status == "FINISHED" {
+		ttl := 30*24*time.Hour + time.Duration(rand.Intn(3600))*time.Second
+		s.RedisService.SetJSON(cacheKey, response, ttl)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
