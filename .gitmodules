@@ -1,0 +1,3 @@
+[submodule "anilist-selfhost"]
+	path = anilist-selfhost
+	url = git@github.com:Saadiq8149/anilist-selfhost
