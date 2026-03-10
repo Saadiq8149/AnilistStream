@@ -31,15 +31,33 @@
 
 ## Self Hosting
 
-### Docker
+### Docker Compose (Recommended)
 
-Pull and run the latest image from Docker Hub.
+Run **AnilistStream** using Docker Compose. This will start the addon together with a Redis cache.
 
-Refer to the Configuration section below or copy `.env.example` to create your `.env` file.
+Create a `docker-compose.yml` file:
 
-```bash
-docker pull 12345saadiq/aniliststream:latest && docker rm -f aniliststream 2>/dev/null || true && docker run -d --restart unless-stopped --name aniliststream -p 7000:7000 --env-file /.env 12345saadiq/aniliststream:latest
+```yaml
+services:
+  aniliststream:
+    image: 12345saadiq/aniliststream:latest
+    container_name: aniliststream
+    ports:
+      - "7000:7000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: aniliststream-redis
+    command: redis-server --save "" --appendonly no --maxmemory 256mb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
 ```
+Create a `.env` file in the same directory as `docker-compose.yml`.
+Refer the Configuration section below or copy the `.env.example` file to create your `.env` file.  
 
 ---
 
@@ -51,6 +69,7 @@ Configuration is handled via **environment variables**. You can set these in you
 |---|---|---|
 | `PORT` | `7000` | Port the server listens on |
 | `SERVER_URL` | `http://127.0.0.1:7000` | Url the server runs on |
+| `REDIS_ADDR` | `redis:6379` | Url of redis docker container |
 | `METADATA_PROVIDER` |`ANILIST or ALL_ANIME` | Pick one, Anilist Better | 
 | `SOURCE_PROVIDERS` |`ALL_ANIME` | Comma separated providers if multiple available | 
 | `ANILIST_CLIENT_ID` | — | AniList OAuth application client ID (Optional) |
