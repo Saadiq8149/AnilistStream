@@ -102,7 +102,7 @@ To get Kitsu Catalog support, you need to obtain an API key from IdsMoe:
 
 Planned improvements and upcoming features:
 
-- [ ]  Redis caching layer for faster metadata and stream resolution
+- [x]  Redis caching layer for faster metadata and stream resolution
 - [x]  Fixing double updates to Anilist Updating Episode x and x+1 at once causing errors/issues
 - [ ]  Custom Posters with Ratings and Airing/Finished and New Episode Available Tags
 - [ ]  More Lists (Trending, Planning, Watching)
