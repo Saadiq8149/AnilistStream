@@ -2,10 +2,9 @@ package metadata
 
 import (
 	"anilist-stream/internal/types"
+	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -62,31 +61,35 @@ func (p *AllAnimeProvider) SearchAnime(query string) ([]types.Metadata, error) {
 		}
 	}`
 
-	variables := map[string]any{
-		"search": map[string]any{
-			"allowAdult":   true,
-			"allowUnknown": false,
-			"query":        strings.ToLower(query),
+	requestBody := map[string]any{
+		"query": searchGql,
+		"variables": map[string]any{
+			"search": map[string]any{
+				"allowAdult":   true,
+				"allowUnknown": false,
+				"query":        strings.ToLower(query),
+			},
+			"limit":           40,
+			"translationType": "sub",
+			"countryOrigin":   "ALL",
 		},
-		"limit":           40,
-		"translationType": "sub",
-		"countryOrigin":   "ALL",
 	}
 
-	variablesJSON, _ := json.Marshal(variables)
+	bodyBytes, err := json.Marshal(requestBody)
+	if err != nil {
+		return nil, err
+	}
 
-	params := url.Values{}
-	params.Set("query", searchGql)
-	params.Set("variables", string(variablesJSON))
+	req, err := http.NewRequest("POST", allanimeAPI+"/api", bytes.NewBuffer(bodyBytes))
+	if err != nil {
+		return nil, err
+	}
 
-	reqURL := fmt.Sprintf("%s/api?%s", allanimeAPI, params.Encode())
-
-	req, _ := http.NewRequest("GET", reqURL, nil)
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Referer", allanimeReferer)
 	req.Header.Set("User-Agent", userAgent)
 
 	client := &http.Client{Timeout: 10 * time.Second}
-
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -115,8 +118,7 @@ func (p *AllAnimeProvider) SearchAnime(query string) ([]types.Metadata, error) {
 		} `json:"data"`
 	}
 
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, err
 	}
 
@@ -133,7 +135,7 @@ func (p *AllAnimeProvider) SearchAnime(query string) ([]types.Metadata, error) {
 			episodes, _ = strconv.Atoi(anime.EpisodeCnt)
 		}
 
-		meta := types.Metadata{
+		metadata = append(metadata, types.Metadata{
 			ProviderID:  anime.ID,
 			AnilistID:   anime.AniListID,
 			MalID:       anime.MalID,
@@ -145,9 +147,7 @@ func (p *AllAnimeProvider) SearchAnime(query string) ([]types.Metadata, error) {
 			Episodes:    episodes,
 			Genres:      anime.Genres,
 			Status:      anime.Status,
-		}
-
-		metadata = append(metadata, meta)
+		})
 	}
 
 	return metadata, nil
@@ -175,28 +175,28 @@ func (p *AllAnimeProvider) GetAnime(id string) (types.Metadata, error) {
 		}
 	}`
 
-	variables := map[string]any{
-		"id": id,
+	requestBody := map[string]any{
+		"query": query,
+		"variables": map[string]any{
+			"id": id,
+		},
 	}
 
-	variablesJSON, _ := json.Marshal(variables)
-
-	params := url.Values{}
-	params.Set("query", query)
-	params.Set("variables", string(variablesJSON))
-
-	reqURL := fmt.Sprintf("%s/api?%s", allanimeAPI, params.Encode())
-
-	req, err := http.NewRequest("GET", reqURL, nil)
+	bodyBytes, err := json.Marshal(requestBody)
 	if err != nil {
 		return types.Metadata{}, err
 	}
 
+	req, err := http.NewRequest("POST", allanimeAPI+"/api", bytes.NewBuffer(bodyBytes))
+	if err != nil {
+		return types.Metadata{}, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Referer", allanimeReferer)
 	req.Header.Set("User-Agent", userAgent)
 
 	client := &http.Client{Timeout: 10 * time.Second}
-
 	resp, err := client.Do(req)
 	if err != nil {
 		return types.Metadata{}, err
@@ -223,8 +223,7 @@ func (p *AllAnimeProvider) GetAnime(id string) (types.Metadata, error) {
 		} `json:"data"`
 	}
 
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return types.Metadata{}, err
 	}
 
@@ -240,7 +239,7 @@ func (p *AllAnimeProvider) GetAnime(id string) (types.Metadata, error) {
 		episodes, _ = strconv.Atoi(anime.EpisodeCnt)
 	}
 
-	meta := types.Metadata{
+	return types.Metadata{
 		ProviderID:  anime.ID,
 		AnilistID:   anime.AniListID,
 		MalID:       anime.MalID,
@@ -252,6 +251,5 @@ func (p *AllAnimeProvider) GetAnime(id string) (types.Metadata, error) {
 		Episodes:    episodes,
 		Genres:      anime.Genres,
 		Status:      anime.Status,
-	}
-	return meta, nil
+	}, nil
 }
