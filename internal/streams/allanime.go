@@ -5,9 +5,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"net/url"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -90,21 +89,15 @@ func (a *AllAnimeProvider) GetStreams(anilistID string, malID string, episode in
 
 	filteredProviders := []encodedProvider{}
 	for _, provider := range providerIDs {
-		for _, allowed := range allowedProviders {
-			if provider.Name == allowed {
-				filteredProviders = append(filteredProviders, provider)
-				break
-			}
+		if slices.Contains(allowedProviders, provider.Name) {
+			filteredProviders = append(filteredProviders, provider)
 		}
 	}
 
 	dubFilteredProviders := []encodedProvider{}
 	for _, provider := range dubProviderIDs {
-		for _, allowed := range allowedProviders {
-			if provider.Name == allowed {
-				dubFilteredProviders = append(dubFilteredProviders, provider)
-				break
-			}
+		if slices.Contains(allowedProviders, provider.Name) {
+			dubFilteredProviders = append(dubFilteredProviders, provider)
 		}
 	}
 
@@ -230,53 +223,51 @@ func getAnimeTitles(anilistID string) ([]string, error) {
 
 func getAnimeByAnilistID(title string, anilistID string) (string, error) {
 	searchGql := `
-		query (
-			$search: SearchInput
-			$limit: Int
-			$translationType: VaildTranslationTypeEnumType
-			$countryOrigin: VaildCountryOriginEnumType
+	query (
+		$search: SearchInput
+		$limit: Int
+		$translationType: VaildTranslationTypeEnumType
+		$countryOrigin: VaildCountryOriginEnumType
+	) {
+		shows(
+			search: $search
+			limit: $limit
+			page: 1
+			translationType: $translationType
+			countryOrigin: $countryOrigin
 		) {
-			shows(
-				search: $search
-				limit: $limit
-				page: 1
-				translationType: $translationType
-				countryOrigin: $countryOrigin
-			) {
-				edges {
-					_id
-					aniListId
-				}
+			edges {
+				_id
+				aniListId
 			}
-		}`
+		}
+	}`
 
-	variables := map[string]any{
-		"search": map[string]any{
-			"allowAdult":   true,
-			"allowUnknown": false,
-			"query":        strings.ToLower(title),
+	requestBody := map[string]any{
+		"query": searchGql,
+		"variables": map[string]any{
+			"search": map[string]any{
+				"allowAdult":   true,
+				"allowUnknown": false,
+				"query":        strings.ToLower(title),
+			},
+			"limit":           40,
+			"translationType": "sub",
+			"countryOrigin":   "ALL",
 		},
-		"limit":           40,
-		"translationType": "sub",
-		"countryOrigin":   "ALL",
 	}
 
-	variablesJSON, err := json.Marshal(variables)
+	bodyBytes, err := json.Marshal(requestBody)
 	if err != nil {
 		return "", err
 	}
 
-	params := url.Values{}
-	params.Set("query", searchGql)
-	params.Set("variables", string(variablesJSON))
-
-	reqURL := fmt.Sprintf("%s/api?%s", allanimeAPI, params.Encode())
-
-	req, err := http.NewRequest("GET", reqURL, nil)
+	req, err := http.NewRequest("POST", allanimeAPI+"/api", bytes.NewBuffer(bodyBytes))
 	if err != nil {
 		return "", err
 	}
 
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Referer", allanimeReferer)
 	req.Header.Set("User-Agent", userAgent)
 
@@ -285,12 +276,7 @@ func getAnimeByAnilistID(title string, anilistID string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	body, err := io.ReadAll(resp.Body)
-	resp.Body.Close()
-	if err != nil {
-		return "", err
-	}
+	defer resp.Body.Close()
 
 	var result struct {
 		Data struct {
@@ -303,8 +289,7 @@ func getAnimeByAnilistID(title string, anilistID string) (string, error) {
 		} `json:"data"`
 	}
 
-	err = json.Unmarshal(body, &result)
-	if err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return "", err
 	}
 
@@ -334,28 +319,26 @@ func fetchEncodedProviderIDs(showID string, subOrDub string, episodeNum int) ([]
 		}
 	}`
 
-	variables := map[string]any{
-		"showId":          showID,
-		"translationType": subOrDub,
-		"episodeString":   strconv.Itoa(episodeNum),
+	requestBody := map[string]any{
+		"query": query,
+		"variables": map[string]any{
+			"showId":          showID,
+			"translationType": subOrDub,
+			"episodeString":   strconv.Itoa(episodeNum),
+		},
 	}
 
-	variablesJSON, err := json.Marshal(variables)
+	bodyBytes, err := json.Marshal(requestBody)
 	if err != nil {
 		return nil, err
 	}
 
-	params := url.Values{}
-	params.Set("query", query)
-	params.Set("variables", string(variablesJSON))
-
-	reqURL := fmt.Sprintf("%s/api?%s", allanimeAPI, params.Encode())
-
-	req, err := http.NewRequest("GET", reqURL, nil)
+	req, err := http.NewRequest("POST", allanimeAPI+"/api", bytes.NewBuffer(bodyBytes))
 	if err != nil {
 		return nil, err
 	}
 
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Referer", allanimeReferer)
 	req.Header.Set("User-Agent", userAgent)
 
@@ -377,8 +360,7 @@ func fetchEncodedProviderIDs(showID string, subOrDub string, episodeNum int) ([]
 		} `json:"data"`
 	}
 
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, err
 	}
 
