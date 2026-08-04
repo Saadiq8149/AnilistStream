@@ -12,6 +12,7 @@ export function App() {
         <Router>
           <Route path="/" component={Home} />
           <Route path="/configure" component={Configure} />
+          <Route path="/:config/configure" component={Configure} />
           <Route default component={NotFound} />
         </Router>
       </main>
