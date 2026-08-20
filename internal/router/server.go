@@ -21,5 +21,3 @@ func NewServer() *Server {
 func (s *Server) Start() error {
 	return s.httpServer.ListenAndServe()
 }
-
-
