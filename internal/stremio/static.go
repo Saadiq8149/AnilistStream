@@ -23,12 +23,8 @@ func (h *Handler) Css(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "public/style.css")
 }
 
-func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "public/index.html")
-}
-
-func (h *Handler) Configure(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("public/configure.html")
+func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("public/index.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

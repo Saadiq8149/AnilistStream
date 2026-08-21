@@ -18,9 +18,9 @@ func CreateRoutes() *http.ServeMux {
 
 	addStremioRoute(mux, "/manifest.json", stremioHandler.Manifest)
 	addStremioRoute(mux, "/logo.png", stremioHandler.Logo)
-	addStremioRoute(mux, "/configure", stremioHandler.Configure)
+	addStremioRoute(mux, "/configure", stremioHandler.Index)
 	mux.HandleFunc("GET /style.css", stremioHandler.Css)
-	mux.HandleFunc("GET /", stremioHandler.Home)
+	mux.HandleFunc("GET /", stremioHandler.Index)
 
 	return mux
 }
