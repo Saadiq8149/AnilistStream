@@ -1,8 +1,8 @@
 package router
 
 import (
-	"aniliststream/internal/addon"
 	"aniliststream/internal/middleware"
+	"aniliststream/internal/stremio"
 	"net/http"
 )
 
@@ -14,11 +14,13 @@ func addStremioRoute(mux *http.ServeMux, pattern string, handler http.HandlerFun
 
 func CreateRoutes() *http.ServeMux {
 	mux := http.NewServeMux()
-	addonHandler := addon.NewHandler()
+	stremioHandler := stremio.NewHandler()
 
-	addStremioRoute(mux, "/manifest.json", addonHandler.Manifest)
-	addStremioRoute(mux, "/logo.png", addonHandler.Logo)
-	addStremioRoute(mux, "/", addonHandler.Frontend)
+	addStremioRoute(mux, "/manifest.json", stremioHandler.Manifest)
+	addStremioRoute(mux, "/logo.png", stremioHandler.Logo)
+	addStremioRoute(mux, "/configure", stremioHandler.Configure)
+	mux.HandleFunc("GET /style.css", stremioHandler.Css)
+	mux.HandleFunc("GET /", stremioHandler.Home)
 
 	return mux
 }

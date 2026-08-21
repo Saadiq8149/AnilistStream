@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title>Configure · AnilistStream</title>
+
+        <link rel="stylesheet" href="/style.css" />
+    </head>
+
+    <body>
+        <div class="page">
+            <header class="site-header">
+                <div class="container header-inner">
+                    <a href="/" class="brand">
+                        <span>AnilistStream</span>
+                    </a>
+
+                    <a href="/" class="button">← Back</a>
+                </div>
+            </header>
+
+            <main>
+                <section class="configure">
+                    <div class="container">
+                        <div class="page-heading">
+                            <div class="hero-label">Configuration</div>
+
+                            <h1>Configure addon</h1>
+                        </div>
+
+                        <form id="configure-form" class="config-card">
+                            <!-- Worker -->
+
+                            <section class="config-section">
+                                <div class="section-header">
+                                    <div>
+                                        <h2 class="section-title">Worker</h2>
+
+                                        <p class="section-description">
+                                            Your AnilistStream worker URL.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label
+                                        for="cf-worker-url"
+                                        class="field-label"
+                                    >
+                                        URL
+                                    </label>
+
+                                    <input
+                                        id="cf-worker-url"
+                                        class="input"
+                                        type="url"
+                                        placeholder="https://example.workers.dev"
+                                        autocomplete="url"
+                                        required
+                                    />
+                                </div>
+                            </section>
+
+                            <!-- AniList -->
+
+                            <section class="config-section">
+                                <div class="section-header">
+                                    <div>
+                                        <h2 class="section-title">AniList</h2>
+
+                                        <p class="section-description">
+                                            Sync your watch progress.
+                                        </p>
+                                    </div>
+
+                                    <span id="anilist-status" class="status">
+                                        Not connected
+                                    </span>
+                                </div>
+
+                                <div id="anilist-login">
+                                    <button
+                                        type="button"
+                                        id="login-button"
+                                        class="button button-primary"
+                                    >
+                                        Connect AniList →
+                                    </button>
+                                </div>
+
+                                <div id="anilist-connected" hidden>
+                                    <div class="connection-box">
+                                        <code
+                                            id="token-preview"
+                                            class="token"
+                                        ></code>
+
+                                        <button
+                                            type="button"
+                                            id="disconnect-button"
+                                            class="button button-danger"
+                                        >
+                                            Disconnect
+                                        </button>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- Install -->
+
+                            <section class="config-section install-section">
+                                <div class="install-copy">
+                                    <h2>Install</h2>
+
+                                    <p>Add the configured addon to Stremio.</p>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    class="button button-primary"
+                                >
+                                    Install in Stremio →
+                                </button>
+                            </section>
+                        </form>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <script>
+            const ANILIST_CLIENT_ID = "{{ .AnilistClientID }}";
+
+            const form = document.getElementById("configure-form");
+            const workerInput = document.getElementById("cf-worker-url");
+
+            const status = document.getElementById("anilist-status");
+            const loginSection = document.getElementById("anilist-login");
+            const connectedSection =
+                document.getElementById("anilist-connected");
+
+            const loginButton = document.getElementById("login-button");
+
+            const disconnectButton =
+                document.getElementById("disconnect-button");
+
+            const tokenPreview = document.getElementById("token-preview");
+
+            let anilistToken = null;
+
+            function loadAniListToken() {
+                const params = new URLSearchParams(
+                    window.location.hash.slice(1),
+                );
+
+                const token = params.get("access_token");
+
+                if (token) {
+                    sessionStorage.setItem("anilist_token", token);
+
+                    anilistToken = token;
+
+                    history.replaceState(null, "", window.location.pathname);
+
+                    return;
+                }
+
+                anilistToken = sessionStorage.getItem("anilist_token");
+            }
+
+            function updateAniListUI() {
+                if (!anilistToken) {
+                    status.textContent = "Not connected";
+                    status.className = "status";
+
+                    loginSection.hidden = false;
+                    connectedSection.hidden = true;
+
+                    return;
+                }
+
+                status.textContent = "Connected";
+                status.className = "status status-connected";
+
+                loginSection.hidden = true;
+                connectedSection.hidden = false;
+
+                tokenPreview.textContent =
+                    anilistToken.slice(0, 12) +
+                    " •••••••••••••••• " +
+                    anilistToken.slice(-8);
+            }
+
+            function loginToAniList() {
+                const url =
+                    "https://anilist.co/api/v2/oauth/authorize" +
+                    "?client_id=" +
+                    encodeURIComponent(ANILIST_CLIENT_ID) +
+                    "&response_type=token";
+
+                window.location.href = url;
+            }
+
+            function disconnectAniList() {
+                sessionStorage.removeItem("anilist_token");
+
+                anilistToken = null;
+
+                updateAniListUI();
+            }
+
+            function encodeConfig(config) {
+                return btoa(JSON.stringify(config))
+                    .replace(/\+/g, "-")
+                    .replace(/\//g, "_")
+                    .replace(/=+$/, "");
+            }
+
+            async function installAddon(event) {
+                event.preventDefault();
+
+                const config = {
+                    cfWorkerURL: workerInput.value.trim(),
+                };
+
+                if (anilistToken) {
+                    config.anilistAuthToken = anilistToken;
+                }
+
+                const encoded = encodeConfig(config);
+
+                const manifest =
+                    window.location.origin + "/" + encoded + "/manifest.json";
+
+                const isLocalhost =
+                    window.location.hostname === "localhost" ||
+                    window.location.hostname === "127.0.0.1";
+
+                if (isLocalhost) {
+                    try {
+                        await navigator.clipboard.writeText(manifest);
+
+                        alert("Manifest URL copied to clipboard.");
+                    } catch {
+                        prompt("Copy this manifest URL:", manifest);
+                    }
+
+                    return;
+                }
+
+                window.location.href =
+                    "stremio://" +
+                    window.location.host +
+                    "/" +
+                    encoded +
+                    "/manifest.json";
+            }
+
+            loginButton.addEventListener("click", loginToAniList);
+
+            disconnectButton.addEventListener("click", disconnectAniList);
+
+            form.addEventListener("submit", installAddon);
+
+            loadAniListToken();
+            updateAniListUI();
+        </script>
+    </body>
+</html>
