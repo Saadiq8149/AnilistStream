@@ -6,23 +6,15 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
-	"strings"
 )
 
-type contextKey string
-
-const configKey contextKey = "config"
+const configKey = "config"
 
 func ConfigMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		parts := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
+		configString := r.PathValue("config")
 
-		if len(parts) == 0 || parts[0] == "" {
-			http.Error(w, "missing config", http.StatusBadRequest)
-			return
-		}
-
-		decoded, err := base64.RawURLEncoding.DecodeString(parts[0])
+		decoded, err := base64.RawURLEncoding.DecodeString(configString)
 		if err != nil {
 			http.Error(w, "invalid config", http.StatusBadRequest)
 			return
@@ -35,7 +27,6 @@ func ConfigMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		ctx := context.WithValue(r.Context(), configKey, config)
-
 		next(w, r.WithContext(ctx))
 	}
 }

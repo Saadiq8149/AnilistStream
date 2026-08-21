@@ -7,9 +7,9 @@ import (
 )
 
 func addStremioRoute(mux *http.ServeMux, pattern string, handler http.HandlerFunc) {
-	wrapped := middleware.ConfigMiddleware(middleware.StremioMiddleware(handler))
+	wrapped := middleware.StremioMiddleware(handler)
 	mux.HandleFunc("GET "+pattern, wrapped)
-	mux.HandleFunc("GET /{config}"+pattern, wrapped)
+	mux.HandleFunc("GET /{config}"+pattern, middleware.ConfigMiddleware(wrapped))
 }
 
 func CreateRoutes() *http.ServeMux {
