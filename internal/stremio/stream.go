@@ -53,7 +53,8 @@ func (h *Handler) Stream(w http.ResponseWriter, r *http.Request) {
 			Description: source.SourceType,
 			Subtitles:   source.Subtitles,
 			BehaviorHints: &models.BehaviorHints{
-				BingeGroup: "aniliststream-" + source.Name,
+				BingeGroup:   "aniliststream-" + source.Name,
+				ProxyHeaders: source.Headers,
 			},
 		})
 	}

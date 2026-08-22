@@ -25,6 +25,7 @@ type AnimeSource struct {
 	Name string `json:"name,omitempty"`
 	Url  string `json:"url"`
 	// HardSub SoftSub Dub Unknown
-	SourceType string     `json:"sourceType,omitempty"`
-	Subtitles  []Subtitle `json:"subtitles,omitempty"`
+	SourceType string        `json:"sourceType,omitempty"`
+	Subtitles  []Subtitle    `json:"subtitles,omitempty"`
+	Headers    *ProxyHeaders `json:"headers,omitempty"`
 }
