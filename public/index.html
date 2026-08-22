@@ -30,27 +30,24 @@
 
             <main>
                 <!-- Intro -->
-
                 <section class="hero">
                     <div class="container">
                         <div class="hero-label">Stremio addon</div>
 
-                        <h1>Anime streaming with AniList sync.</h1>
+                        <h1>Anime streaming with Anilist sync.</h1>
 
                         <p class="hero-description">
-                            Watch anime through Stremio and keep your AniList
+                            Watch anime through Stremio and keep your Anilist
                             progress up to date.
                         </p>
                     </div>
                 </section>
 
                 <!-- Configuration -->
-
                 <section class="configure">
                     <div class="container">
                         <form id="configure-form" class="config-card">
                             <!-- Worker -->
-
                             <section class="config-section">
                                 <div class="section-header">
                                     <div>
@@ -81,34 +78,62 @@
                                 </div>
                             </section>
 
-                            <!-- AniList -->
-
+                            <!-- Providers -->
                             <section class="config-section">
                                 <div class="section-header">
                                     <div>
-                                        <h2 class="section-title">AniList</h2>
+                                        <h2 class="section-title">Providers</h2>
+
+                                        <p class="section-description">
+                                            Choose the providers to use for
+                                            streaming.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="provider-list">
+                                    {{ range .Providers }}
+                                    <label class="provider-option">
+                                        <input
+                                            type="checkbox"
+                                            name="providers"
+                                            value="{{ . }}"
+                                            checked
+                                        />
+
+                                        <span>{{ . }}</span>
+                                    </label>
+                                    {{ end }}
+                                </div>
+                            </section>
+
+                            <!-- Anilist -->
+                            <section class="config-section">
+                                <div class="section-header">
+                                    <div>
+                                        <h2 class="section-title">Anilist</h2>
 
                                         <p class="section-description">
                                             Sync your watch progress.
                                         </p>
                                     </div>
 
-                                    <span id="anilist-status" class="status">
+                                    <span id="Anilist-status" class="status">
                                         Not connected
                                     </span>
                                 </div>
 
-                                <div id="anilist-login">
+                                <div id="Anilist-login">
                                     <button
                                         type="button"
                                         id="login-button"
                                         class="button button-primary"
                                     >
-                                        Connect AniList →
+                                        Connect Anilist →
                                     </button>
                                 </div>
 
-                                <div id="anilist-connected" hidden>
+                                <div id="Anilist-connected" hidden>
                                     <div class="connection-box">
                                         <code
                                             id="token-preview"
@@ -127,11 +152,9 @@
                             </section>
 
                             <!-- Install -->
-
                             <section class="config-section install-section">
                                 <div class="install-copy">
                                     <h2>Install</h2>
-
                                     <p>Add the configured addon to Stremio.</p>
                                 </div>
 
@@ -146,101 +169,74 @@
                     </div>
                 </section>
             </main>
-
-            <footer class="site-footer">
-                <div class="container footer-inner">
-                    <span>AnilistStream</span>
-                    <span>Stremio addon</span>
-                </div>
-            </footer>
         </div>
 
         <script>
-            const ANILIST_CLIENT_ID = "{{ .AnilistClientID }}";
+            const Anilist_CLIENT_ID = "{{ .AnilistClientID }}";
 
             const form = document.getElementById("configure-form");
-
             const workerInput = document.getElementById("cf-worker-url");
-
-            const status = document.getElementById("anilist-status");
-
-            const loginSection = document.getElementById("anilist-login");
-
+            const status = document.getElementById("Anilist-status");
+            const loginSection = document.getElementById("Anilist-login");
             const connectedSection =
-                document.getElementById("anilist-connected");
-
+                document.getElementById("Anilist-connected");
             const loginButton = document.getElementById("login-button");
-
             const disconnectButton =
                 document.getElementById("disconnect-button");
-
             const tokenPreview = document.getElementById("token-preview");
+            const providerInputs = document.querySelectorAll(
+                'input[name="providers"]',
+            );
+            let AnilistToken = null;
 
-            let anilistToken = null;
-
-            function loadAniListToken() {
+            function loadAnilistToken() {
                 const params = new URLSearchParams(
                     window.location.hash.slice(1),
                 );
 
                 const token = params.get("access_token");
-
                 if (token) {
-                    sessionStorage.setItem("anilist_token", token);
-
-                    anilistToken = token;
-
+                    sessionStorage.setItem("Anilist_token", token);
+                    AnilistToken = token;
                     history.replaceState(null, "", window.location.pathname);
-
                     return;
                 }
 
-                anilistToken = sessionStorage.getItem("anilist_token");
+                AnilistToken = sessionStorage.getItem("Anilist_token");
             }
 
-            function updateAniListUI() {
-                if (!anilistToken) {
+            function updateAnilistUI() {
+                if (!AnilistToken) {
                     status.textContent = "Not connected";
-
                     status.className = "status";
-
                     loginSection.hidden = false;
-
                     connectedSection.hidden = true;
-
                     return;
                 }
 
                 status.textContent = "Connected";
-
                 status.className = "status status-connected";
-
                 loginSection.hidden = true;
-
                 connectedSection.hidden = false;
-
                 tokenPreview.textContent =
-                    anilistToken.slice(0, 12) +
+                    AnilistToken.slice(0, 12) +
                     " •••••••••••••••• " +
-                    anilistToken.slice(-8);
+                    AnilistToken.slice(-8);
             }
 
-            function loginToAniList() {
+            function loginToAnilist() {
                 const url =
-                    "https://anilist.co/api/v2/oauth/authorize" +
+                    "https://Anilist.co/api/v2/oauth/authorize" +
                     "?client_id=" +
-                    encodeURIComponent(ANILIST_CLIENT_ID) +
+                    encodeURIComponent(Anilist_CLIENT_ID) +
                     "&response_type=token";
-
                 window.location.href = url;
             }
 
-            function disconnectAniList() {
-                sessionStorage.removeItem("anilist_token");
-
-                anilistToken = null;
-
-                updateAniListUI();
+            function disconnectAnilist() {
+                sessionStorage.removeItem("Anilist_token");
+                AnilistToken = null;
+                updateAnilistUI();
             }
 
             function encodeConfig(config) {
@@ -253,19 +249,26 @@
             async function installAddon(event) {
                 event.preventDefault();
 
+                const providers = Array.from(providerInputs)
+                    .filter((input) => input.checked)
+                    .map((input) => input.value);
+                if (providers.length === 0) {
+                    alert("Select at least one provider.");
+                    return;
+                }
+
                 const config = {
                     cfWorkerURL: workerInput.value.trim(),
+                    providers,
                 };
 
-                if (anilistToken) {
-                    config.anilistAuthToken = anilistToken;
+                if (AnilistToken) {
+                    config.AnilistAuthToken = AnilistToken;
                 }
 
                 const encoded = encodeConfig(config);
-
                 const manifest =
                     window.location.origin + "/" + encoded + "/manifest.json";
-
                 const isLocalhost =
                     window.location.hostname === "localhost" ||
                     window.location.hostname === "127.0.0.1";
@@ -273,12 +276,10 @@
                 if (isLocalhost) {
                     try {
                         await navigator.clipboard.writeText(manifest);
-
                         alert("Manifest URL copied to clipboard.");
                     } catch {
                         prompt("Copy this manifest URL:", manifest);
                     }
-
                     return;
                 }
 
@@ -290,14 +291,12 @@
                     "/manifest.json";
             }
 
-            loginButton.addEventListener("click", loginToAniList);
-
-            disconnectButton.addEventListener("click", disconnectAniList);
-
+            loginButton.addEventListener("click", loginToAnilist);
+            disconnectButton.addEventListener("click", disconnectAnilist);
             form.addEventListener("submit", installAddon);
 
-            loadAniListToken();
-            updateAniListUI();
+            loadAnilistToken();
+            updateAnilistUI();
         </script>
     </body>
 </html>

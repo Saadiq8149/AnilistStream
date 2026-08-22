@@ -1,7 +1,13 @@
 package stremio
 
-type Handler struct{}
+import "aniliststream/internal/providers"
 
-func NewHandler() *Handler {
-	return &Handler{}
+type Handler struct {
+	providerManager *providers.Manager
+}
+
+func NewHandler(providerManager *providers.Manager) *Handler {
+	return &Handler{
+		providerManager: providerManager,
+	}
 }

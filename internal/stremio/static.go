@@ -8,6 +8,7 @@ import (
 
 type FrontendData struct {
 	AnilistClientID string
+	Providers       []string
 }
 
 func (h *Handler) Manifest(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +33,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 
 	data := FrontendData{
 		AnilistClientID: os.Getenv("ANILIST_CLIENT_ID"),
+		Providers:       h.providerManager.GetProvidersList(),
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {

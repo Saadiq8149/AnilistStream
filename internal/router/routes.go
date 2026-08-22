@@ -2,6 +2,7 @@ package router
 
 import (
 	"aniliststream/internal/middleware"
+	"aniliststream/internal/providers"
 	"aniliststream/internal/stremio"
 	"net/http"
 )
@@ -14,7 +15,8 @@ func addStremioRoute(mux *http.ServeMux, pattern string, handler http.HandlerFun
 
 func CreateRoutes() *http.ServeMux {
 	mux := http.NewServeMux()
-	stremioHandler := stremio.NewHandler()
+	providerManager := providers.NewManager()
+	stremioHandler := stremio.NewHandler(providerManager)
 
 	addStremioRoute(mux, "/manifest.json", stremioHandler.Manifest)
 	addStremioRoute(mux, "/logo.png", stremioHandler.Logo)

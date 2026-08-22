@@ -3,16 +3,22 @@ package providers
 import (
 	"aniliststream/internal/models"
 	"fmt"
+	"maps"
+	"slices"
 )
 
 type Manager struct {
 	registry *Registry
 }
 
-func NewManager(registry *Registry) *Manager {
+func NewManager() *Manager {
 	return &Manager{
-		registry: registry,
+		registry: NewRegistry(),
 	}
+}
+
+func (m *Manager) GetProvidersList() []string {
+	return slices.Collect(maps.Keys(m.registry.providers))
 }
 
 func (m *Manager) GetProvider(name string) (Provider, bool) {
