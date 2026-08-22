@@ -48,7 +48,7 @@
                     <div class="container">
                         <form id="configure-form" class="config-card">
                             <!-- Worker -->
-                            <section class="config-section">
+                            <!--<section class="config-section">
                                 <div class="section-header">
                                     <div>
                                         <h2 class="section-title">Worker</h2>
@@ -76,7 +76,7 @@
                                         required
                                     />
                                 </div>
-                            </section>
+                            </section>-->
 
                             <!-- Provider -->
                             <section class="config-section">
@@ -189,7 +189,7 @@
             const Anilist_CLIENT_ID = "{{ .AnilistClientID }}";
 
             const form = document.getElementById("configure-form");
-            const workerInput = document.getElementById("cf-worker-url");
+            // const workerInput = document.getElementById("cf-worker-url");
             const status = document.getElementById("Anilist-status");
             const loginSection = document.getElementById("Anilist-login");
             const connectedSection =
@@ -201,7 +201,7 @@
             const provider = document.getElementById("provider").value;
 
             const config = {
-                cfWorkerURL: workerInput.value.trim(),
+                // cfWorkerURL: workerInput.value.trim(),
                 provider,
             };
             let AnilistToken = null;
@@ -267,7 +267,7 @@
                 event.preventDefault();
 
                 const config = {
-                    cfWorkerURL: workerInput.value.trim(),
+                    // cfWorkerURL: workerInput.value.trim(),
                     provider,
                 };
 
