@@ -4,7 +4,7 @@
   "catalogs": [
     {
       "type": "anime",
-      "id": "as-search",
+      "id": "as:search",
       "name": "Anime",
       "extra": [
         {

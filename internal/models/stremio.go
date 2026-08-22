@@ -33,11 +33,12 @@ type Meta struct {
 }
 
 type Video struct {
-	Id       string `json:"id"`
-	Title    string `json:"title"`
-	Released string `json:"released"`
-	Episode  int    `json:"episode,omitempty"`
-	Season   int    `json:"season,omitempty"`
+	Id        string `json:"id"`
+	Title     string `json:"title"`
+	Released  string `json:"released"`
+	Episode   int    `json:"episode,omitempty"`
+	Season    int    `json:"season,omitempty"`
+	Thumbnail string `json:"thumbnail,omitempty"`
 }
 
 type StreamResponse struct {

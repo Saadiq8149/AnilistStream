@@ -78,32 +78,46 @@
                                 </div>
                             </section>
 
-                            <!-- Providers -->
+                            <!-- Provider -->
                             <section class="config-section">
                                 <div class="section-header">
                                     <div>
-                                        <h2 class="section-title">Providers</h2>
+                                        <h2 class="section-title">Provider</h2>
 
                                         <p class="section-description">
-                                            Choose the providers to use for
+                                            Choose the provider to use for
                                             streaming.
                                         </p>
                                     </div>
                                 </div>
 
-                                <div class="provider-list">
-                                    {{ range .Providers }}
-                                    <label class="provider-option">
-                                        <input
-                                            type="checkbox"
-                                            name="providers"
-                                            value="{{ . }}"
-                                            checked
-                                        />
-
-                                        <span>{{ . }}</span>
+                                <div class="field">
+                                    <label for="provider" class="field-label">
+                                        Provider
                                     </label>
-                                    {{ end }}
+
+                                    <select
+                                        id="provider"
+                                        name="provider"
+                                        class="input"
+                                        required
+                                    >
+                                        {{ range $i, $provider := .Providers }}
+                                        <option
+                                            value="{{ $provider }}"
+                                            {{
+                                            if
+                                            eq
+                                            $i
+                                            0
+                                            }}selected{{
+                                            end
+                                            }}
+                                        >
+                                            {{ $provider }}
+                                        </option>
+                                        {{ end }}
+                                    </select>
                                 </div>
                             </section>
 
@@ -184,9 +198,12 @@
             const disconnectButton =
                 document.getElementById("disconnect-button");
             const tokenPreview = document.getElementById("token-preview");
-            const providerInputs = document.querySelectorAll(
-                'input[name="providers"]',
-            );
+            const provider = document.getElementById("provider").value;
+
+            const config = {
+                cfWorkerURL: workerInput.value.trim(),
+                provider,
+            };
             let AnilistToken = null;
 
             function loadAnilistToken() {
@@ -249,17 +266,9 @@
             async function installAddon(event) {
                 event.preventDefault();
 
-                const providers = Array.from(providerInputs)
-                    .filter((input) => input.checked)
-                    .map((input) => input.value);
-                if (providers.length === 0) {
-                    alert("Select at least one provider.");
-                    return;
-                }
-
                 const config = {
                     cfWorkerURL: workerInput.value.trim(),
-                    providers,
+                    provider,
                 };
 
                 if (AnilistToken) {

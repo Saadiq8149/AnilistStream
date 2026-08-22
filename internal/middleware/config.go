@@ -8,8 +8,6 @@ import (
 	"net/http"
 )
 
-const configKey = "config"
-
 func ConfigMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		configString := r.PathValue("config")
@@ -26,7 +24,12 @@ func ConfigMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), configKey, config)
+		ctx := context.WithValue(r.Context(), models.ConfigKey, config)
 		next(w, r.WithContext(ctx))
 	}
+}
+
+func GetConfig(r *http.Request) (models.Config, bool) {
+	config, exists := r.Context().Value(models.ConfigKey).(models.Config)
+	return config, exists
 }

@@ -18,6 +18,7 @@ type Episode struct {
 	Number    int    `json:"number"`
 	Title     string `json:"title,omitempty"`
 	Thumbnail string `json:"thumbnail,omitempty"`
+	Released  string `json:"released,omitempty"`
 }
 
 type AnimeSource struct {
