@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	neturl "net/url"
 	"os"
 	"regexp"
 	"strconv"
@@ -53,8 +52,8 @@ func (a AniDb) get(url string) ([]byte, error) {
 }
 
 func (a AniDb) Search(query string) ([]models.AnimePreview, error) {
-	url := BASE_API + "/browse?q=" + url.QueryEscape(query)
-	body, err := a.get(url)
+	rawUrl := BASE_API + "/browse?q=" + url.QueryEscape(query)
+	body, err := a.get(rawUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +77,7 @@ func (a AniDb) Search(query string) ([]models.AnimePreview, error) {
 		if !exists {
 			return
 		}
-		parsed, err := neturl.Parse(href)
+		parsed, err := url.Parse(href)
 		if err != nil {
 			return
 		}
