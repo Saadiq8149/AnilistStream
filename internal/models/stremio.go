@@ -35,7 +35,7 @@ type Meta struct {
 type Video struct {
 	Id        string `json:"id"`
 	Title     string `json:"title"`
-	Released  string `json:"released"`
+	Released  string `json:"released,omitempty"`
 	Episode   int    `json:"episode,omitempty"`
 	Season    int    `json:"season,omitempty"`
 	Thumbnail string `json:"thumbnail,omitempty"`

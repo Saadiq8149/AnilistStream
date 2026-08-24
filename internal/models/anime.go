@@ -1,5 +1,11 @@
 package models
 
+type AnimePreview struct {
+	Id         string `json:"id"`
+	Title      string `json:"title"`
+	CoverImage string `json:"coverImage,omitempty"`
+}
+
 type Anime struct {
 	Id            string    `json:"id"`
 	Title         string    `json:"title"`
@@ -11,6 +17,10 @@ type Anime struct {
 	Genres        []string  `json:"genres,omitempty"`
 	TotalEpisodes int       `json:"totalEpisodes,omitempty"`
 	Episodes      []Episode `json:"episodes,omitempty"`
+	Rating        string    `json:"rating,omitempty"`
+	// TODO: syncing to anilist
+	// AnilistId     int       `json:"anilistId,omitempty"`
+	// MalId         int       `json:"malId,omitempty"`
 }
 
 type Episode struct {

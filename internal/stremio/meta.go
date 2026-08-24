@@ -41,11 +41,12 @@ func (h *Handler) Meta(w http.ResponseWriter, r *http.Request) {
 			Poster:      anime.CoverImage,
 			Background:  anime.BannerImage,
 			Description: anime.Description,
+			ImdbRating:  anime.Rating,
 		},
 	}
 
 	if anime.Year != 0 {
-		response.Meta.ReleaseInfo = fmt.Sprintf("%d", anime.Year)
+		response.Meta.ReleaseInfo = fmt.Sprintf("%d-", anime.Year)
 	}
 
 	for _, episode := range anime.Episodes {

@@ -32,7 +32,7 @@ func (h *Handler) Stream(w http.ResponseWriter, r *http.Request) {
 	animeID := parts[1]
 	episodeID := parts[2]
 
-	sources, err := h.providerManager.GetStreams(
+	sources, err := h.providerManager.GetSources(
 		config.Provider,
 		animeID,
 		episodeID,
@@ -53,7 +53,6 @@ func (h *Handler) Stream(w http.ResponseWriter, r *http.Request) {
 			Description: source.SourceType,
 			Subtitles:   source.Subtitles,
 			BehaviorHints: &models.BehaviorHints{
-				BingeGroup:   "aniliststream-" + source.Name,
 				ProxyHeaders: source.Headers,
 			},
 		})

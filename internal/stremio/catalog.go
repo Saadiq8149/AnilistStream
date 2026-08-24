@@ -47,11 +47,10 @@ func (h *Handler) Catalog(w http.ResponseWriter, r *http.Request) {
 
 	for _, anime := range results {
 		response.Metas = append(response.Metas, models.MetaPreview{
-			Id:          "as:" + anime.Id,
-			Type:        "anime",
-			Name:        anime.Title,
-			Poster:      anime.CoverImage,
-			Description: anime.Description,
+			Id:     "as:" + anime.Id,
+			Type:   "anime",
+			Name:   anime.Title,
+			Poster: anime.CoverImage,
 		})
 	}
 

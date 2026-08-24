@@ -30,9 +30,11 @@ func CreateRoutes() http.Handler {
 	mux.HandleFunc("GET /manifest", middleware.StremioMiddleware(stremioHandler.Manifest))
 	mux.HandleFunc("GET /logo", middleware.StremioMiddleware(stremioHandler.Logo))
 	mux.HandleFunc("GET /configure", middleware.StremioMiddleware(stremioHandler.Index))
+
 	addStremioRoute("GET /{config}/manifest", stremioHandler.Manifest, mux)
 	addStremioRoute("GET /{config}/logo", stremioHandler.Logo, mux)
 	addStremioRoute("GET /{config}/configure", stremioHandler.Index, mux)
+
 	addStremioRoute("GET /{config}/catalog/{type}/{id}/{extra}", stremioHandler.Catalog, mux)
 	addStremioRoute("GET /{config}/catalog/{type}/{id}", stremioHandler.Catalog, mux)
 	addStremioRoute("GET /{config}/meta/{type}/{id}", stremioHandler.Meta, mux)
