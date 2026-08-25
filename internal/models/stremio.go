@@ -30,6 +30,8 @@ type Meta struct {
 	ReleaseInfo string   `json:"releaseInfo,omitempty"`
 	ImdbRating  string   `json:"imdbRating,omitempty"`
 	Videos      []Video  `json:"videos,omitempty"`
+	Logo        string   `json:"logo,omitempty"`
+	Runtime     string   `json:"runtime,omitempty"`
 }
 
 type Video struct {

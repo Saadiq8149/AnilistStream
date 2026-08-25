@@ -103,19 +103,14 @@ func SyncAnilist(token string, anilistId string, episodeNumber int) {
 		switch list.Status {
 		case "PLANNING":
 			status = "CURRENT"
-
 		case "CURRENT":
 			status = "CURRENT"
-
 		case "REPEATING":
 			status = "REPEATING"
-
 		case "PAUSED":
 			status = "CURRENT"
-
 		case "DROPPED":
 			status = "CURRENT"
-
 		case "COMPLETED":
 			status = "REPEATING"
 		}
