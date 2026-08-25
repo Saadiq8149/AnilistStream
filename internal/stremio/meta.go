@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -32,6 +33,8 @@ func (h *Handler) Meta(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	anilistId, anilistIdExists := anime.ExternalIds["anilist"]
+
 	response := models.MetaResponse{
 		Meta: models.Meta{
 			Id:          id,
@@ -46,12 +49,17 @@ func (h *Handler) Meta(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if anime.Year != 0 {
-		response.Meta.ReleaseInfo = fmt.Sprintf("%d-", anime.Year)
+		response.Meta.ReleaseInfo = fmt.Sprintf("%d", anime.Year)
 	}
 
 	for _, episode := range anime.Episodes {
+		id := "as:" + animeID + ":" + episode.Id + ":" + strconv.Itoa(episode.Number)
+		if anilistIdExists {
+			id = "as:" + animeID + ":" + episode.Id + ":" + strconv.Itoa(episode.Number) + ":" + anilistId
+		}
+
 		response.Meta.Videos = append(response.Meta.Videos, models.Video{
-			Id:        "as:" + animeID + ":" + episode.Id,
+			Id:        id,
 			Title:     episode.Title,
 			Episode:   episode.Number,
 			Thumbnail: episode.Thumbnail,

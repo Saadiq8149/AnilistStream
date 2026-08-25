@@ -3,8 +3,10 @@ package stremio
 import (
 	"aniliststream/internal/middleware"
 	"aniliststream/internal/models"
+	"aniliststream/internal/sync"
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -24,13 +26,14 @@ func (h *Handler) Stream(w http.ResponseWriter, r *http.Request) {
 	}
 
 	parts := strings.Split(id, ":")
-	if len(parts) != 3 {
-		http.Error(w, "invalid stream id", http.StatusBadRequest)
-		return
-	}
 
 	animeID := parts[1]
 	episodeID := parts[2]
+	episodeNumber, _ := strconv.Atoi(parts[3])
+	if len(parts) > 4 {
+		anilistId := parts[4]
+		sync.SyncAnilist(config.AnilistAuthToken, anilistId, episodeNumber)
+	}
 
 	sources, err := h.providerManager.GetSources(
 		config.Provider,

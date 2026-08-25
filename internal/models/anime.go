@@ -18,9 +18,8 @@ type Anime struct {
 	TotalEpisodes int       `json:"totalEpisodes,omitempty"`
 	Episodes      []Episode `json:"episodes,omitempty"`
 	Rating        string    `json:"rating,omitempty"`
-	// TODO: syncing to anilist
-	// AnilistId     int       `json:"anilistId,omitempty"`
-	// MalId         int       `json:"malId,omitempty"`
+	// mal, anilist, kitsu, anidb
+	ExternalIds map[string]string `json:"externalIds,omitempty"`
 }
 
 type Episode struct {

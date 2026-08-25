@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -99,10 +98,7 @@ func (a AniDb) GetDetails(id string) (models.Anime, error) {
 	if err != nil {
 		return models.Anime{}, err
 	}
-	err = os.WriteFile("body.html", body, 0644)
-	if err != nil {
-		return models.Anime{}, err
-	}
+
 	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
 	if err != nil {
 		return models.Anime{}, err
@@ -174,10 +170,9 @@ func (a AniDb) GetDetails(id string) (models.Anime, error) {
 	episodes := make([]models.Episode, 0, len(episodeResponse.Episodes))
 	for _, episode := range episodeResponse.Episodes {
 		episodes = append(episodes, models.Episode{
-			Id:       strconv.Itoa(episode.ID),
-			Number:   episode.Number,
-			Title:    "Episode " + strconv.Itoa(episode.Number),
-			Released: "1999-10-20T00:00:00.000Z",
+			Id:     strconv.Itoa(episode.ID),
+			Number: episode.Number,
+			Title:  "Episode " + strconv.Itoa(episode.Number),
 		})
 	}
 	bannerImage, _ := doc.Find(`main > div.relative img`).First().Attr("src")
@@ -189,6 +184,42 @@ func (a AniDb) GetDetails(id string) (models.Anime, error) {
 			return false
 		}
 		return true
+	})
+
+	externalIds := make(map[string]string)
+
+	doc.Find(`a[target="_blank"][rel="noopener"]`).Each(func(_ int, s *goquery.Selection) {
+		href, exists := s.Attr("href")
+		if !exists {
+			return
+		}
+
+		u, err := url.Parse(href)
+		if err != nil {
+			return
+		}
+
+		parts := strings.Split(strings.Trim(u.Path, "/"), "/")
+		if len(parts) < 2 {
+			return
+		}
+
+		var provider string
+
+		switch u.Hostname() {
+		case "myanimelist.net":
+			provider = "mal"
+		case "anilist.co":
+			provider = "anilist"
+		case "anidb.net":
+			provider = "anidb"
+		case "kitsu.app":
+			provider = "kitsu"
+		default:
+			return
+		}
+
+		externalIds[provider] = parts[len(parts)-1]
 	})
 
 	anime := models.Anime{
@@ -203,6 +234,7 @@ func (a AniDb) GetDetails(id string) (models.Anime, error) {
 		TotalEpisodes: len(episodes),
 		BannerImage:   bannerImage,
 		Rating:        rating,
+		ExternalIds:   externalIds,
 	}
 	return anime, nil
 }
