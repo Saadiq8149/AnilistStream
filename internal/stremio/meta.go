@@ -84,6 +84,8 @@ func (h *Handler) Meta(w http.ResponseWriter, r *http.Request) {
 						kitsuExists = true
 					}
 				}
+			} else {
+				fmt.Println(err)
 			}
 		}
 	}
