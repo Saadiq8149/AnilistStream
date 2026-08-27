@@ -105,10 +105,9 @@ func (h *Handler) Meta(w http.ResponseWriter, r *http.Request) {
 		title := episode.Title
 		thumbnail := episode.Thumbnail
 		released := episode.Released
-		episodeNumber := episode.Number
+		episodeNumber := episode.Number - minEpNumber + 1
 
 		if kitsuExists {
-			episodeNumber = episode.Number - minEpNumber + 1
 			for _, kitsuEpisode := range kitsuResponse.Meta.Videos {
 				if kitsuEpisode.Episode == episodeNumber {
 					title = kitsuEpisode.Title
