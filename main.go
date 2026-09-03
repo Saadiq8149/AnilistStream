@@ -5,13 +5,12 @@ import (
 	"fmt"
 	"log"
 	"os"
-	// "github.com/joho/godotenv"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	// if err := godotenv.Load(); err != nil {
-	// 	log.Fatalf("error loading .env file: %v", err)
-	// }
+	_ = godotenv.Load()
 
 	fmt.Printf("server running on address: %s\n", os.Getenv("BACKEND_ADDR"))
 
